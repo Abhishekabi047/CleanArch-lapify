@@ -93,7 +93,7 @@ func (uh *UserHandler) LoginWithPassword(c *gin.Context) {
 
 	userId, err := uh.UserUseCase.ExecuteLoginWithPassword(phone, password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "authentication failed"})
 		return
 	} else {
 		fmt.Println("userId:", userId)

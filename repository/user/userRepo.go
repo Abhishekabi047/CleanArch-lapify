@@ -25,7 +25,7 @@ func (ur *UserRepository) GetById(id int) (*entity.User, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, errors.New("new Error")
 	}
 	return &user, nil
 }
@@ -60,7 +60,7 @@ func (ur *UserRepository) CheckPermission(user *entity.User) (bool, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
-		return false, result.Error
+		return false, errors.New("error in fetching block detail")
 	}
 	permission := user.Permission
 	return permission, nil
@@ -76,7 +76,7 @@ func (ur *UserRepository) GetSignupByPhone(phone string) (*models.Signup, error)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, errors.New("error fetching data")
 	}
 	return &user, nil
 }
@@ -124,9 +124,9 @@ func (ur *UserRepository) GetAddressById(addressid int) (*entity.UserAddress, er
 	result := ur.db.Where("id=?", addressid).First(&address)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, result.Error
+			return nil, errors.New("error fetching data")
 		}
-		return nil, result.Error
+		return nil, errors.New("error fetching data")
 	}
 	return &address, nil
 }

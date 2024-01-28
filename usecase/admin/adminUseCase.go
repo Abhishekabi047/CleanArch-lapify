@@ -66,14 +66,14 @@ func (au *AdminUseCase) ExecuteUsersList(page, limit int) ([]entity.User, error)
 	offset := (page - 1) * limit
 	userlist, err := au.adminRepo.GetAllUsers(offset, limit)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error in fetching user list")
 	}
 	return userlist, nil
 }
 func (tp *AdminUseCase) ExecuteTogglePermission(id int) error {
 	result, err := tp.adminRepo.GetById(id)
 	if err != nil {
-		return err
+		return errors.New("fetch error")
 	}
 	result.Permission = !result.Permission
 	err1 := tp.adminRepo.Update(result)
@@ -126,7 +126,7 @@ func (ad *AdminUseCase) ExecuteAdminDashBoard() (*entity.AdminDashboard, error) 
 func (au *AdminUseCase) ExecuteStocklessProducts() (*[]entity.Inventory, error) {
 	prod, err := au.adminRepo.GetstocklessProducts()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error fetching")
 	}
 	return prod, nil
 }
@@ -135,7 +135,7 @@ func (pu *AdminUseCase) ExecuteUserSearch(page, limit int, search string) ([]ent
 	offset := (page - 1) * limit
 	users, err := pu.adminRepo.GetUsersBySearch(offset, limit, search)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error in user search")
 	}
 	return users, nil
 }
