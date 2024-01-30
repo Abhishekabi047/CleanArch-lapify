@@ -26,3 +26,18 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+
+# # Terminated EC2 instance 
+
+#     - name: Deploy to AWS EC2 instance
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{secrets.PUBLIC_IP}}
+#         username: ubuntu
+#         key: ${{secrets.SSH_KEY}}
+#         script: |
+#           cd CleanArch-lapify/
+#           git pull
+#           go build ./
+#           sudo systemctl restart lapify.service
