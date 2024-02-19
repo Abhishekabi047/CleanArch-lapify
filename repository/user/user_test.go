@@ -2,7 +2,6 @@ package repository_test
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"regexp"
 	"testing"
@@ -25,8 +24,6 @@ func TestUserRepository_GetById(t *testing.T) {
 		wantUser *entity.User
 		wantErr  error
 	}{
-		// ...
-
 		{
 			name: "success",
 			id:   1,
@@ -195,7 +192,7 @@ func Test_GetAddressById(t *testing.T) {
 					WithArgs(1).
 					WillReturnRows(sqlmock.NewRows([]string{}).AddRow()).WillReturnError(errors.New("error fetching data"))
 			},
-			want:   nil,
+			want:    nil,
 			wantErr: errors.New("error fetching data"),
 		},
 	}
@@ -211,11 +208,11 @@ func Test_GetAddressById(t *testing.T) {
 			u := repository.NewUserRepository(gormDB)
 
 			got, err := u.GetAddressById(tt.args.addressId)
-			fmt.Printf("got: %+v\n", got)
-			fmt.Printf("want: %+v\n", tt.want)
+			// fmt.Printf("got: %+v\n", got)
+			// fmt.Printf("want: %+v\n", tt.want)
 			assert.Equal(t, tt.wantErr, err)
 
-			fmt.Println("Actual error:", err)
+			// fmt.Println("Actual error:", err)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("user.GetByAddresId()= got %v want %v", got, tt.want)
 			}
@@ -223,59 +220,59 @@ func Test_GetAddressById(t *testing.T) {
 	}
 }
 
-func Test_GetSignUpByPhone(t *testing.T){
-	type args struct{
+func Test_GetSignUpByPhone(t *testing.T) {
+	type args struct {
 		phone string
 	}
 
-	tests:=[]struct{
-		name string
-		args args
+	tests := []struct {
+		name       string
+		args       args
 		beforeTest func(sqlmock.Sqlmock)
-		want *models.Signup
-		wantErr error
+		want       *models.Signup
+		wantErr    error
 	}{
 		{
-			name:"success",
-			args:args{phone: "8585124716"} ,
-			beforeTest: func(s sqlmock.Sqlmock){
+			name: "success",
+			args: args{phone: "8585124716"},
+			beforeTest: func(s sqlmock.Sqlmock) {
 				s.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "signups" WHERE "signups"."phone" = $1 ORDER BY "signups"."name" LIMIT 1`)).
-				WithArgs("8585124716").
-				WillReturnRows(sqlmock.NewRows([]string{"name","email","phone","password","referalcode"}).AddRow("abhi","abhishek@gmail.com","8585124716","12345",""))
+					WithArgs("8585124716").
+					WillReturnRows(sqlmock.NewRows([]string{"name", "email", "phone", "password", "referalcode"}).AddRow("abhi", "abhishek@gmail.com", "8585124716", "12345", ""))
 			},
-			want: &models.Signup{Name: "abhi",Email: "abhishek@gmail.com",Phone: "8585124716",Password: "12345",ReferalCode: ""},
+			want:    &models.Signup{Name: "abhi", Email: "abhishek@gmail.com", Phone: "8585124716", Password: "12345", ReferalCode: ""},
 			wantErr: nil,
 		},
 		{
-			name:"error",
+			name: "error",
 			args: args{phone: "8585124716"},
-			beforeTest: func(s sqlmock.Sqlmock){
+			beforeTest: func(s sqlmock.Sqlmock) {
 				s.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "signups" WHERE "signups"."phone" = $1 ORDER BY "signups"."name" LIMIT 1`)).
-				WithArgs("8585124716").
-				WillReturnRows(sqlmock.NewRows([]string{}).AddRow()).WillReturnError(errors.New("error fetching data"))
+					WithArgs("8585124716").
+					WillReturnRows(sqlmock.NewRows([]string{}).AddRow()).WillReturnError(errors.New("error fetching data"))
 			},
-			want: nil,
-			wantErr: errors.New("error fetching data") ,
+			want:    nil,
+			wantErr: errors.New("error fetching data"),
 		},
 	}
-	for _,tt:=range tests{
-		t.Run(tt.name,func(t *testing.T){
-			mockDB,mockSQL,_:=sqlmock.New()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockDB, mockSQL, _ := sqlmock.New()
 			defer mockDB.Close()
-			 
+
 			gormDB, _ := gorm.Open(postgres.New(postgres.Config{
 				Conn: mockDB,
 			}), &gorm.Config{})
 
 			tt.beforeTest(mockSQL)
-			u:=repository.NewUserRepository(gormDB)
+			u := repository.NewUserRepository(gormDB)
 
-			got,err:=u.GetSignupByPhone(tt.args.phone)
-			fmt.Printf("got: %+v\n", got)
-			fmt.Printf("want: %+v\n", tt.want)
+			got, err := u.GetSignupByPhone(tt.args.phone)
+			// fmt.Printf("got: %+v\n", got)
+			// fmt.Printf("want: %+v\n", tt.want)
 			assert.Equal(t, tt.wantErr, err)
 
-			fmt.Println("Actual error:", err)
+			// fmt.Println("Actual error:", err)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("user.GetByAddresId()= got %v want %v", got, tt.want)
 			}

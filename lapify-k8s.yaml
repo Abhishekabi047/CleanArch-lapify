@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lapify
+  labels:
+    app: lapify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lapify
+  template:
+    metadata:
+      labels:
+        app: lapify
+    spec:
+      containers:
+        - name: lapify
+          image: abhishekabi047/lapify:latest
+          imagePullPolicy: Always 
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DBUSER
+              valueFrom:
+                secretKeyRef: 
+                  name: postgres-secret
+                  key: postgres-user
+            - name: DBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-password
+            - name: DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-db
+            - name: DBHOST
+              value: postgres-service
+            - name: DBPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: postgres-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+  
+    app: db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+

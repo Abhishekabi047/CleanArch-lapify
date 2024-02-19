@@ -12,7 +12,7 @@ import (
 
 var DB *gorm.DB
 var dsn string
-var Dbco = "host=localhost user=postgres dbname=ecom password=2589 port=5432 sslmode=disable"
+
 
 func ConnectDb(config config.DataBase) (*gorm.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s", config.DBHost, config.DBUser, config.DBName, config.DBPort, config.DBPassword)
