@@ -23,7 +23,7 @@ func UserRetreiveCookie(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "occured while rereiving"})
 			c.Abort()
 		} else {
-			
+
 			c.Set("userId", userId)
 			c.Set("phonenumber", phone)
 		}
@@ -60,7 +60,7 @@ func AdminRetreiveToken(c *gin.Context) {
 	}
 }
 
-func CreateToken(userId int, useremail string, role string, c *gin.Context) (string){
+func CreateToken(userId int, useremail string, role string, c *gin.Context) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": userId,
 		"email":  useremail,
@@ -88,7 +88,7 @@ func ValidToken(c *gin.Context) bool {
 }
 func RetreiveToken(c *gin.Context) (int, int, string, error) {
 	cookie, _ := c.Cookie("Authorise")
-	
+
 	if cookie == "" {
 		return 0, 0, "", errors.New("cookie not found")
 	} else {
@@ -102,7 +102,7 @@ func RetreiveToken(c *gin.Context) (int, int, string, error) {
 			return 0, 0, "", err
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			
+
 			var userId, userPhone int
 			var role string
 
@@ -139,7 +139,7 @@ func RetreiveToken(c *gin.Context) (int, int, string, error) {
 					role = roleString
 				}
 			}
-			
+
 			return userId, userPhone, role, nil
 		} else {
 			return 0, 0, "", fmt.Errorf("invalid token")

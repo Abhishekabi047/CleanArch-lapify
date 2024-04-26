@@ -496,6 +496,8 @@ func (cp *UserHandler) ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "otp send succesfully", "key": key})
 }
 
+
+
 // OtpValidationPassword godoc
 // @Summary Validate OTP and change user password
 // @Description Validates the provided OTP and changes the user password.

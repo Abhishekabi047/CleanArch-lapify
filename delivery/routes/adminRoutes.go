@@ -9,6 +9,7 @@ import (
 )
 
 func AdminRouter(r *gin.Engine, adminHandler *handlers.AdminHandler) *gin.Engine {
+	r.Use(m.CorsMiddleware)
 	r.POST("/admin/login", adminHandler.AdminLoginWithPassword)
 	r.GET("/admin/home", m.AdminRetreiveToken, adminHandler.Home)
 

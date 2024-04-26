@@ -8,6 +8,7 @@ import (
 )
 
 func OrderRouter(r *gin.Engine, orderHandler *handlers.OrderHandler) *gin.Engine {
+	r.Use(m.CorsMiddleware)
 	r.POST("/user/order/place/:addressid/:payment", m.UserRetreiveCookie, orderHandler.PlaceOrder)
 	r.GET("/user/order/place/:addressid/:payment", m.UserRetreiveCookie, orderHandler.PlaceOrder)
 	r.POST("/user/payment/verify", m.UserRetreiveCookie, orderHandler.PaymentVerification)

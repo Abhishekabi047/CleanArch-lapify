@@ -8,7 +8,7 @@ import (
 )
 
 func UserRouter(r *gin.Engine, userHandler *handlers.UserHandler) *gin.Engine {
-
+	r.Use(m.CorsMiddleware)
 	r.POST("/user/signup", userHandler.SignupWithOtp)
 	r.POST("user/signup/otpvalidation", userHandler.SignupOtpValidation)
 
