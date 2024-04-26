@@ -95,13 +95,7 @@ func (uu *UserUseCase) ExecuteSignupWithOtp(user models.Signup) (string, error) 
 		return "", fmt.Errorf(errorMsg)
 	}
 	var otpKey entity.OtpKey
-	email, err := uu.userRepo.GetByEmail(user.Email)
-	if err != nil {
-		return "", errors.New("error with server")
-	}
-	if email != nil {
-		return "", errors.New("user with this email already exists")
-	}
+
 	phone, err := uu.userRepo.GetByPhone(user.Phone)
 	if err != nil {
 		return "", errors.New("error with server")
