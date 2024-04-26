@@ -364,6 +364,28 @@ func (uu *UserUseCase) ExecuteChangePassword(userid int) (string, error) {
 	}
 }
 
+
+func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
+	var otpkey entity.OtpKey
+	// user, err := uu.userRepo.GetByPhone(phone)
+	// if err != nil {
+	// 	return "", err
+	// }
+	key, err1 := utils.SendOtp(phone, *uu.otp)
+	if err1 != nil {
+		return "", err1
+	} else {
+		otpkey.Key = key
+		otpkey.Phone = phone
+		err := uu.userRepo.CreateOtpKey(otpkey.Key, otpkey.Phone)
+		if err != nil {
+			return "", nil
+		}
+		return key, nil
+	}
+}
+
+
 func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string, userid int) error {
 	user, err := uu.userRepo.GetById(userid)
 	if err != nil {
@@ -383,6 +405,32 @@ func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string,
 	return nil
 
 }
+
+
+func (uu *UserUseCase) ExecuteOtpValidationFPassword(password string, otp string, key string) error {
+	phone,err:=uu.userRepo.GetByKey(key)
+	if err != nil{
+		return err
+	}
+	user, err := uu.userRepo.GetByPhone(phone.Phone)
+	if err != nil {
+		return err
+	}
+	err = utils.CheckOtp(phone.Phone, otp, *uu.otp)
+	if err != nil {
+		return err
+	}
+	hashedpassword, err1 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	user.Password = string(hashedpassword)
+	err1 = uu.userRepo.Update(user)
+	if err1 != nil {
+		return errors.New("password changing failed")
+
+	}
+	return nil
+
+}
+
 
 func (uu *UserUseCase) ExecuteEditAddress(usaddress entity.UserAddress, id int, useraddress string) error {
 	validate := validator.New()

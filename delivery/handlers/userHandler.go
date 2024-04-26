@@ -496,6 +496,27 @@ func (cp *UserHandler) ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "otp send succesfully", "key": key})
 }
 
+// ForgetPassword godoc
+// @Summary Request OTP for resetting forgotten password
+// @Description Initiates the process of resetting a forgotten password by sending an OTP to the user's phone number.
+// @ID forget-password
+// @Accept multipart/form-data
+// @Param phone formData string true "User's phone number"
+// @Tags User
+// @Produce json
+// @Success 200 {object} gin.H{"message": "otp send succesfully", "key": string} "OTP sent successfully for password reset"
+// @Failure 400 {object} gin.H{"error": string} "Bad request: Unable to initiate password reset"
+// @Router /user/forget-password [post]
+func (cp *UserHandler) ForgetPassword(c *gin.Context) {
+	phone := c.PostForm("phone")
+	
+	key, err := cp.UserUseCase.ExecuteForgetPassword(phone)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "otp send succesfully", "key": key})
+}
 
 
 // OtpValidationPassword godoc
@@ -517,6 +538,31 @@ func (cp *UserHandler) OtpValidationPassword(c *gin.Context) {
 	password := c.PostForm("password")
 	otp := c.PostForm("otp")
 	err := cp.UserUseCase.ExecuteOtpValidationPassword(password, otp, userid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "password changed succesfully"})
+}
+
+// OtpValidationFPassword godoc
+// @Summary Validate OTP and change password
+// @Description Validates the received OTP and changes the user's password if OTP is correct.
+// @ID otp-validation-fpassword
+// @Accept multipart/form-data
+// @Param key formData string true "Key received during OTP request"
+// @Param password formData string true "New password"
+// @Param otp formData string true "Received OTP for validation"
+// @Tags User
+// @Produce json
+// @Success 200 {object} gin.H{"message": "password changed succesfully"} "Password changed successfully"
+// @Failure 400 {object} gin.H{"error": string} "Bad request: Unable to validate OTP and change password"
+// @Router /user/otp-validation-fpassword [post]
+func (cp *UserHandler) OtpValidationFPassword(c *gin.Context) {
+	key:=c.PostForm("key")
+	password := c.PostForm("password")
+	otp := c.PostForm("otp")
+	err := cp.UserUseCase.ExecuteOtpValidationFPassword(password, otp, key)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
