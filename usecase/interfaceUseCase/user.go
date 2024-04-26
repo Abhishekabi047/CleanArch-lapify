@@ -18,6 +18,6 @@ type UserUseCase interface {
 	ExecuteOtpValidationPassword(string, string, int) error
 	ExecuteShowUserDetails(int) (*entity.User, *entity.UserAddress, error)
 	ExecuteSignup(entity.User) (*entity.User, error)
-	ExecuteSignupOtpValidation(string, string) error
+	ExecuteSignupOtpValidation( string,  string)  (int,string,error)
 	ExecuteSignupWithOtp(models.Signup) (string, error)
 }

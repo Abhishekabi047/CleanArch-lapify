@@ -7,7 +7,7 @@ type EditUser struct {
 
 type Signup struct {
 	Name        string `json:"name" validate:"required"`
-	Email       string `json:"email" validate:"required,email"`
+	Email       string `json:"email" `
 	Phone       string `json:"phone" validate:"required,numeric,len=10"`
 	Password    string `json:"password" validate:"required,min=8"`
 	ReferalCode string `json:"referalcode"`

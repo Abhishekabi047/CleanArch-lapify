@@ -60,7 +60,7 @@ func AdminRetreiveToken(c *gin.Context) {
 	}
 }
 
-func CreateToken(userId int, useremail string, role string, c *gin.Context) {
+func CreateToken(userId int, useremail string, role string, c *gin.Context) (string){
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": userId,
 		"email":  useremail,
@@ -74,6 +74,7 @@ func CreateToken(userId int, useremail string, role string, c *gin.Context) {
 
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorise", tokenstring, 3600, "", "", false, true)
+	return tokenstring
 }
 
 func ValidToken(c *gin.Context) bool {

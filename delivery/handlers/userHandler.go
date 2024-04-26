@@ -65,12 +65,13 @@ func (uh *UserHandler) SignupWithOtp(c *gin.Context) {
 func (uh *UserHandler) SignupOtpValidation(c *gin.Context) {
 	key := c.PostForm("key")
 	otp := c.PostForm("otp")
-	err := uh.UserUseCase.ExecuteSignupOtpValidation(key, otp)
+	userId,phone,err := uh.UserUseCase.ExecuteSignupOtpValidation(key, otp)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	} else {
-		c.JSON(http.StatusOK, gin.H{"message": "user signup succesfull"})
+		token:=middleware.CreateToken(userId, phone, "user", c)
+		c.JSON(http.StatusOK, gin.H{"message": "user signup succesfull","token":token})
 	}
 }
 
@@ -97,8 +98,8 @@ func (uh *UserHandler) LoginWithPassword(c *gin.Context) {
 		return
 	} else {
 		fmt.Println("userId:", userId)
-		middleware.CreateToken(userId, phone, "user", c)
-		c.JSON(http.StatusOK, gin.H{"message": "user logged in succesfully and cookie stored"})
+		token:=middleware.CreateToken(userId, phone, "user", c)
+		c.JSON(http.StatusOK, gin.H{"message": "user logged in succesfully and cookie stored","token":token})
 	}
 
 }

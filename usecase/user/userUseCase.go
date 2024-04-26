@@ -136,20 +136,20 @@ func (uu *UserUseCase) ExecuteSignupWithOtp(user models.Signup) (string, error) 
 	}
 }
 
-func (uu *UserUseCase) ExecuteSignupOtpValidation(key string, otp string) error {
+func (uu *UserUseCase) ExecuteSignupOtpValidation(key string, otp string) (int, string, error) {
 	result, err := uu.userRepo.GetByKey(key)
 
 	if err != nil {
-		return errors.New("error in key")
+		return 0, "", errors.New("error in key")
 	}
 	fmt.Printf("GetByKey Result: %+v\n", result)
 	user, err := uu.userRepo.GetSignupByPhone(result.Phone)
 	if err != nil {
-		return errors.New("error in phone")
+		return 0, "", errors.New("error in phone")
 	}
 	err = utils.CheckOtp(result.Phone, otp, *uu.otp)
 	if err != nil {
-		return err
+		return 0, "", err
 	} else {
 		newUser := &entity.User{
 			Name:     user.Name,
@@ -159,12 +159,12 @@ func (uu *UserUseCase) ExecuteSignupOtpValidation(key string, otp string) error 
 		}
 		err1 := uu.userRepo.Create(newUser)
 		if err1 != nil {
-			return errors.New("error while crearting user")
+			return 0, "", errors.New("error while crearting user")
 		}
 		if user.ReferalCode != "" {
 			referduser, err := uu.userRepo.GetByReferalCode(user.ReferalCode)
 			if err != nil {
-				return err
+				return 0, "", err
 			}
 			if referduser != nil {
 				referduser.Wallet = referduser.Wallet + 500
@@ -175,7 +175,7 @@ func (uu *UserUseCase) ExecuteSignupOtpValidation(key string, otp string) error 
 		randomBytes := make([]byte, 3)
 		_, err2 := rand.Read(randomBytes)
 		if err2 != nil {
-			return err
+			return 0, "", err
 		}
 
 		referralCode := hex.EncodeToString(randomBytes)
@@ -184,10 +184,10 @@ func (uu *UserUseCase) ExecuteSignupOtpValidation(key string, otp string) error 
 
 		err3 := uu.userRepo.Update(newUser)
 		if err3 != nil {
-			return errors.New("user update failed")
+			return 0, "", errors.New("user update failed")
 		}
 
-		return nil
+		return newUser.Id, newUser.Phone, nil
 	}
 
 }
