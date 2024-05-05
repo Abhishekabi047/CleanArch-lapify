@@ -50,10 +50,10 @@ func (uh *AdminHandler) AdminLoginWithPassword(c *gin.Context) {
 		fmt.Printf("Authentication failed: %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Authentication failed", "details": err.Error()})
 		return
-	} else {
-		middleware.CreateToken(adminId, email, "admin", c)
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Admin logged in succesfully"})
+	token := middleware.CreateToken(adminId, email, "admin", c)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Admin logged in succesfully", "token": token})
 }
 
 // @Summary List Users
