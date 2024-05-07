@@ -560,15 +560,26 @@ func (cp *UserHandler) OtpValidationPassword(c *gin.Context) {
 // @Router /user/otp-validation-fpassword [post]
 func (cp *UserHandler) OtpValidationFPassword(c *gin.Context) {
 	key:=c.PostForm("key")
-	password := c.PostForm("password")
 	otp := c.PostForm("otp")
-	err := cp.UserUseCase.ExecuteOtpValidationFPassword(password, otp, key)
+	err := cp.UserUseCase.ExecuteOtpValidationFPassword(otp, key)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{"message": "otp validated"})
+}
+
+func (cp *UserHandler) ForgetpassChange(c *gin.Context) {
+	key:=c.PostForm("key")
+	password := c.PostForm("password")
+	err:=cp.UserUseCase.ForgetPassChange(key,password)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return 
+	}
 	c.JSON(http.StatusOK, gin.H{"message": "password changed succesfully"})
 }
+
 
 //	 CartItems godoc
 //		@Summary Get the items in the user's cart

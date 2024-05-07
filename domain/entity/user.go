@@ -35,6 +35,7 @@ type OtpKey struct {
 	gorm.Model
 	Key   string `json:"key"`
 	Phone string `json:"phone"`
+	Validated bool `json:"validated" gorm:"default:false"`
 }
 type ListUsersResponse struct {
     Users []User `json:"users"`

@@ -364,7 +364,6 @@ func (uu *UserUseCase) ExecuteChangePassword(userid int) (string, error) {
 	}
 }
 
-
 func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
 	var otpkey entity.OtpKey
 	// user, err := uu.userRepo.GetByPhone(phone)
@@ -384,7 +383,6 @@ func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
 		return key, nil
 	}
 }
-
 
 func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string, userid int) error {
 	user, err := uu.userRepo.GetById(userid)
@@ -406,31 +404,66 @@ func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string,
 
 }
 
-
-func (uu *UserUseCase) ExecuteOtpValidationFPassword(password string, otp string, key string) error {
-	phone,err:=uu.userRepo.GetByKey(key)
-	if err != nil{
-		return err
-	}
-	user, err := uu.userRepo.GetByPhone(phone.Phone)
+func (uu *UserUseCase) ExecuteOtpValidationFPassword(otp string, key string) error {
+	phone, err := uu.userRepo.GetByKey(key)
 	if err != nil {
 		return err
 	}
+	// user, err := uu.userRepo.GetByPhone(phone.Phone)
+	// if err != nil {
+	// 	return err
+	// }
 	err = utils.CheckOtp(phone.Phone, otp, *uu.otp)
 	if err != nil {
 		return err
 	}
-	hashedpassword, err1 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	user.Password = string(hashedpassword)
-	err1 = uu.userRepo.Update(user)
-	if err1 != nil {
-		return errors.New("password changing failed")
-
+	phone.Validated = true
+	err = uu.userRepo.UpdateOtp(phone)
+	if err != nil {
+		return err
 	}
+	fmt.Println("ressss",phone.Validated)
+
+	// hashedpassword, err1 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// user.Password = string(hashedpassword)
+	// err1 = uu.userRepo.Update(user)
+	// if err1 != nil {
+	// 	return errors.New("password changing failed")
+
+	// }
 	return nil
 
 }
 
+func (uu *UserUseCase) ForgetPassChange(key string, password string) error {
+	res, err := uu.userRepo.CheckValidation(key)
+	if err != nil {
+		return err
+	}
+	fmt.Println("res",res)
+	phone, err := uu.userRepo.GetByKey(key)
+	if err != nil {
+		return err
+	}
+	fmt.Println("ph",phone.Phone)
+	user, err := uu.userRepo.GetByPhone(phone.Phone)
+	if err != nil {
+		return err
+	}
+
+	if res == true {
+		hashedpassword, err1 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		user.Password = string(hashedpassword)
+		err1 = uu.userRepo.Update(user)
+		if err1 != nil {
+			return errors.New("password changing failed")
+
+		}
+	}else{
+		return errors.New("Otp Not validated")
+	}
+	return nil
+}
 
 func (uu *UserUseCase) ExecuteEditAddress(usaddress entity.UserAddress, id int, useraddress string) error {
 	validate := validator.New()

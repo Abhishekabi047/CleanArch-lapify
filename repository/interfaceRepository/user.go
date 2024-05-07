@@ -24,4 +24,6 @@ type UserRepository interface {
 	GetSignupByPhone(string) (*models.Signup, error)
 	Update(*entity.User) error
 	UpdateAddress(*entity.UserAddress) error
+	UpdateOtp( *entity.OtpKey) error
+	CheckValidation( string) (bool,error)
 }

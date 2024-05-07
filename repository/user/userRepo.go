@@ -187,3 +187,18 @@ func (cn *UserRepository) GetByReferalCode(code string) (*entity.User, error) {
 	return &user, nil
 }
 
+func (ur *UserRepository) UpdateOtp(user *entity.OtpKey) error {
+	return ur.db.Updates(user).Error
+}
+
+func (ur *UserRepository) CheckValidation(key string) (bool,error){
+	var otpKey entity.OtpKey
+	result:=ur.db.Where(&entity.OtpKey{Key: key}).First(&otpKey)
+	if result.Error != nil {
+        if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+            return false, nil
+        }
+        return false, result.Error
+    }
+    return otpKey.Validated, nil
+}

@@ -13,6 +13,7 @@ func UserRouter(r *gin.Engine, userHandler *handlers.UserHandler) *gin.Engine {
 	r.POST("user/signup/otpvalidation", userHandler.SignupOtpValidation)
 	r.POST("/user/forget-password",  userHandler.ForgetPassword)
 	r.POST("/user/forget-password/validation", userHandler.OtpValidationFPassword)
+	r.POST("/user/forget-password-change", userHandler.ForgetpassChange)
 
 	r.POST("/user/login", userHandler.LoginWithPassword)
 	r.POST("/user/address", m.UserRetreiveCookie, userHandler.AddAddress)
