@@ -44,4 +44,6 @@ type ProductRepository interface {
 	UpdateCouponUsage(*entity.UsedCoupon) error
 	UpdateInventory( *entity.Inventory) error
 	UpdateProduct( *entity.Product) error
+	UpdateProductdetails( *entity.ProductDetails) error
+	GetProductDescriptionByID( int) (*entity.ProductDetails, error) 
 }

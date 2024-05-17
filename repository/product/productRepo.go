@@ -94,6 +94,11 @@ func (ct *ProductRepository) CreateProduct(product *entity.Product) (int, error)
 func (up *ProductRepository) UpdateProduct(product *entity.Product) error {
 	return up.db.Save(product).Error
 }
+
+func (up *ProductRepository) UpdateProductdetails(product *entity.ProductDetails) error {
+	return up.db.Save(product).Error
+}
+
 func (dp *ProductRepository) DeleteProduct(product *entity.Product) error {
 	return dp.db.Delete(product).Error
 }
@@ -354,4 +359,13 @@ func (dp *ProductRepository) GetInventoryByID(id int) (*entity.Inventory, error)
 
 func (up *ProductRepository) UpdateInventory(inventory *entity.Inventory) error {
 	return up.db.Save(inventory).Error
+}
+
+func (dp *ProductRepository) GetProductDescriptionByID(id int) (*entity.ProductDetails, error) {
+	var prod entity.ProductDetails
+	err := dp.db.Where("product_id=?", id).First(&prod).Error
+	if err != nil {
+		return nil, errors.New("record not found")
+	}
+	return &prod, nil
 }

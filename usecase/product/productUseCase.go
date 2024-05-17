@@ -157,7 +157,7 @@ func (pu *ProductUseCase) ExecuteCreateProductDetails(details entity.ProductDeta
 	}
 }
 
-func (pt *ProductUseCase) ExecuteEditProduct(product entity.Product, id int) error {
+func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int) error {
 	validate := validator.New()
 	validate.RegisterValidation("positive", PositiveNumeric)
 	if err := validate.Struct(product); err != nil {
@@ -189,14 +189,25 @@ func (pt *ProductUseCase) ExecuteEditProduct(product entity.Product, id int) err
 	existingProduct.Price = product.Price
 	existingProduct.Category = product.Category
 	existingProduct.Size = product.Size
-	existingProduct.ImageURL = product.ImageURL
 
 	err1 := pt.productRepo.UpdateProduct(existingProduct)
 	if err1 != nil {
 		return err1
-	} else {
-		return nil
 	}
+
+	des,err:=pt.productRepo.GetProductDescriptionByID(id)
+	if err != nil {
+		return err
+	}
+	des.Description=product.Description
+	des.Specification=product.Specification
+
+	err2:=pt.productRepo.UpdateProductdetails(des)
+	if err2!= nil{
+		return err2
+	}
+	return nil
+
 }
 
 func (de *ProductUseCase) ExecuteDeleteProduct(id int) error {

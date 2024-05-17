@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"project/delivery/middleware"
+	"project/delivery/models"
 	"project/domain/entity"
 	"project/usecase/interfaceUseCase"
 
@@ -346,7 +347,7 @@ func (cp *AdminHandler) CreateProduct(c *gin.Context) {
 // @Failure 400 {string} string "Product edit failed"
 // @Router /admin/products/{id} [put]
 func (ep *AdminHandler) EditProduct(c *gin.Context) {
-	var product entity.Product
+	var product models.EditProduct
 	ids := c.Param("id")
 	id, err := strconv.Atoi(ids)
 	if err != nil {

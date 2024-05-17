@@ -37,3 +37,13 @@ type ProductWithQuantityResponse struct {
 	ImageURL   string `json:"image_url"`
 	Quantity   int    `json:"quantity"`
 }
+
+type EditProduct struct{
+	Name       string `json:"name" validate:"required" form:"name"`
+	Price      int    `json:"price" validate:"required,number" form:"price"`
+	Size       string `json:"size" validate:"required" form:"size"`
+	Category   int    `form:"category" gorm:"foreignKey:ID;references:ID" validate:"required,numeric"`
+	Description   string `json:"description" validate:"required" form:"description"`
+	Specification string `json:"specification" validate:"required" form:"specification"`
+
+}
