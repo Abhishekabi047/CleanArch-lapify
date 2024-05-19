@@ -586,3 +586,18 @@ func (or *OrderHandler) PrintInvoice(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"pdf": pdfFilePath})
 
 }
+
+func (or *OrderHandler) AdminOrderItems(c *gin.Context) {
+	strorderId := c.Param("orderid")
+	orderid, err := strconv.Atoi(strorderId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	orderItems,err:=or.OrderUseCase.ExecuteGetOrderItems(orderid)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"orderItems":orderItems})
+}

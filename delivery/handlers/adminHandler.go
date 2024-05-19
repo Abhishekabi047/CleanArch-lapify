@@ -695,3 +695,18 @@ func (cu *AdminHandler) Logout(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Admin logged out succesfully"})
 	}
 }
+
+func (pd *AdminHandler) ProductDetailsAdmin(c *gin.Context) {
+	ids := c.Param("productid")
+	id, err := strconv.Atoi(ids)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
+		return
+	}
+	product, productdetails, err1 := pd.ProductUseCase.ExecuteProductDetails(id)
+	if err1 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "product not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails})
+}

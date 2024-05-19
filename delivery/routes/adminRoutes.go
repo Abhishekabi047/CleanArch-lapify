@@ -25,6 +25,7 @@ func AdminRouter(r *gin.Engine, adminHandler *handlers.AdminHandler) *gin.Engine
 	r.GET("/admin/products", m.AdminRetreiveToken, adminHandler.AdminProductlist)
 	r.POST("/admin/products", m.AdminRetreiveToken, adminHandler.CreateProduct)
 	r.PUT("/admin/products/stocks/:id", m.AdminRetreiveToken, adminHandler.AddStock)
+	r.GET("/admin/products/details/:productid", m.AdminRetreiveToken, adminHandler.ProductDetailsAdmin)
 
 	r.PATCH("/admin/products/:id", m.AdminRetreiveToken, adminHandler.EditProduct)
 	r.DELETE("admin/products/:id", m.AdminRetreiveToken, adminHandler.DeleteProduct)

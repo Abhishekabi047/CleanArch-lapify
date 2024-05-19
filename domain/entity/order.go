@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Order struct {
 	gorm.Model    `json:"-"`
-	ID            int    `gorm:"primarykey" json:"id"`
-	UserId        int    `json:"orderid"`
+	ID            int    `gorm:"primarykey" json:"orderid"`
+	UserId        int    `json:"userid"`
 	Addressid     int    `json:"addressid"`
 	Total         int    `json:"total"`
 	Status        string `json:"status"`

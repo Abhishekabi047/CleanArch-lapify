@@ -17,6 +17,7 @@ func OrderRouter(r *gin.Engine, orderHandler *handlers.OrderHandler) *gin.Engine
 
 	r.PATCH("/admin/order/update/:orderid", m.AdminRetreiveToken, orderHandler.AdminOrderUpdate)
 	r.GET("/admin/order/details", m.AdminRetreiveToken, orderHandler.AdminOrderDetails)
+	r.GET("/admin/orderitems/:orderid", m.AdminRetreiveToken, orderHandler.AdminOrderItems)
 	r.PATCH("/admin/order/cancel/:orderid", m.AdminRetreiveToken, orderHandler.AdminCancelOrder)
 
 	r.GET("/admin/salesreport/period/:period", m.AdminRetreiveToken, orderHandler.SalesReportByPeriod)
