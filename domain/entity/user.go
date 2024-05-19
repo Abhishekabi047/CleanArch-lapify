@@ -11,7 +11,7 @@ type User struct {
 	Password   string `json:"password" validate:"required,min=8"`
 	IsBlocked  bool   `gorm:"not null;default:true" json:"-"`
 	Wallet     int    `json:"wallet"`
-	Permission bool   `gorm:"not null;default:true" json:"-"`
+	Permission bool   `gorm:"not null;default:true" json:"permission"`
 	ReferalCode string `json:"referalcode"`
 }
 
