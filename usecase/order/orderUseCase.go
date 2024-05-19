@@ -747,3 +747,12 @@ func (ou *OrderUseCase) ExecutePaymentWallet(userId, addressId int) (*entity.Inv
 	}
 	return Invoice, nil
 }
+
+
+func (ou *OrderUseCase) ExecuteGetOrderItems(orderId int) ([]entity.OrderItem, error){
+	orderitems,err:=ou.orderRepo.GetAllOrderItems(orderId)
+	if err != nil{
+		return nil,err
+	}
+	return orderitems,nil
+}

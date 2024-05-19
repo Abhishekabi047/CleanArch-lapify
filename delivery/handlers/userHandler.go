@@ -409,8 +409,8 @@ func (cu *UserHandler) AddAddress(c *gin.Context) {
 	}
 	address.User_id = userid
 	err1 := cu.UserUseCase.CheckAddress(userid, address.Type)
-	if err1 != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+	if err1 == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "type already exists"})
 		return
 	}
 	err := cu.UserUseCase.ExecuteAddAddress(&address)

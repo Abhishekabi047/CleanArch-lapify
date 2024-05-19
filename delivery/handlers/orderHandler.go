@@ -56,9 +56,13 @@ func (oh *OrderHandler) PlaceOrder(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
-		} else {
-			c.JSON(http.StatusOK, gin.H{"invoice": invoice})
 		}
+		orderitems,err:=oh.OrderUseCase.ExecuteGetOrderItems(invoice.OrderId)
+		if err != nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"invoice": invoice,"OrderItems":orderitems})
 	} else if PaymentMethod == "razorpay" {
 		razorId, orderId, err1 := oh.OrderUseCase.ExecuteRazorPay(userid, addressId)
 		if err1 != nil {

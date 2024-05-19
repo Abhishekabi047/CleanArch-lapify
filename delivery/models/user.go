@@ -47,3 +47,12 @@ type EditProduct struct{
 	Specification string `json:"specification" validate:"required" form:"specification"`
 
 }
+
+type AllUser struct{
+	Id         int    `gorm:"primarykey"  json:"id"`
+	Name       string `json:"name" validate:"required,alpha" `
+	Email      string `json:"email" validate:"required,email"`
+	Phone      string `json:"phone" validate:"required"`
+	Wallet     int    `json:"wallet"`
+	ReferalCode string `json:"referalcode"`
+}

@@ -28,4 +28,5 @@ type OrderUseCase interface {
 	UpdateInvoiceStatus(int, string) error
 	UpdatedUser(int) (*entity.Order, error)
 	ExecuteOrderid(int) (*entity.Order, error)
+	ExecuteGetOrderItems( int) ([]entity.OrderItem, error)
 }
