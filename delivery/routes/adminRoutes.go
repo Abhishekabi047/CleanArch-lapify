@@ -28,7 +28,8 @@ func AdminRouter(r *gin.Engine, adminHandler *handlers.AdminHandler) *gin.Engine
 	r.GET("/admin/products/details/:productid", m.AdminRetreiveToken, adminHandler.ProductDetailsAdmin)
 
 	r.PATCH("/admin/products/:id", m.AdminRetreiveToken, adminHandler.EditProduct)
-	r.DELETE("admin/products/:id", m.AdminRetreiveToken, adminHandler.DeleteProduct)
+	r.DELETE("admin/bin_products/:id", m.AdminRetreiveToken, adminHandler.DeleteProduct)
+	r.DELETE("admin/products/:id", m.AdminRetreiveToken, adminHandler.PermanentDeleteProd)
 
 	r.POST("/admin/coupons", m.AdminRetreiveToken, adminHandler.AddCoupon)
 	r.GET("/admin/coupons", m.AdminRetreiveToken, adminHandler.AllCoupons)

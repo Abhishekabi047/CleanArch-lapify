@@ -45,6 +45,7 @@ type EditProduct struct{
 	Category   int    `form:"category" gorm:"foreignKey:ID;references:ID" validate:"required,numeric"`
 	Description   string `json:"description" validate:"required" form:"description"`
 	Specification string `json:"specification" validate:"required" form:"specification"`
+	Quantity   int `json:"quantity" validate:"required" form:"quantity"`
 
 }
 

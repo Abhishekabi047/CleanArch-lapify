@@ -397,6 +397,20 @@ func (dp *AdminHandler) DeleteProduct(c *gin.Context) {
 	}
 }
 
+func (dp *AdminHandler) PermanentDeleteProd(c *gin.Context) {
+	ids := c.Param("id")
+	id, err := strconv.Atoi(ids)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "str conv failed"})
+	}
+	err1 := dp.ProductUseCase.ExecutePermanentDeleteProduct(id)
+	if err1 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "product not found"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"succes": "product deleted"})
+	}
+}
+
 // @Summary Get a list of products for admin
 // @Description Retrieve a list of products for the admin dashboard.
 // @ID get-admin-products

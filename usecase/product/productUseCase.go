@@ -195,17 +195,28 @@ func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int)
 		return err1
 	}
 
-	des,err:=pt.productRepo.GetProductDescriptionByID(id)
+	des, err := pt.productRepo.GetProductDescriptionByID(id)
 	if err != nil {
 		return err
 	}
-	des.Description=product.Description
-	des.Specification=product.Specification
+	des.Description = product.Description
+	des.Specification = product.Specification
 
-	err2:=pt.productRepo.UpdateProductdetails(des)
-	if err2!= nil{
+	err2 := pt.productRepo.UpdateProductdetails(des)
+	if err2 != nil {
 		return err2
 	}
+
+	inventory,err:=pt.productRepo.GetInventoryByID(id)
+	if err != nil{
+		return err
+	}
+	inventory.Quantity=product.Quantity
+	err3:=pt.productRepo.UpdateInventory(inventory)
+	if err3 != nil{
+		return err3
+	}
+
 	return nil
 
 }
@@ -218,6 +229,14 @@ func (de *ProductUseCase) ExecuteDeleteProduct(id int) error {
 	result.Removed = !result.Removed
 	err1 := de.productRepo.UpdateProduct(result)
 	if err1 != nil {
+		return errors.New("product deleted")
+	}
+	return nil
+}
+
+func (de *ProductUseCase) ExecutePermanentDeleteProduct(id int) error {
+	err := de.productRepo.PermanentDelete(id)
+	if err != nil {
 		return errors.New("product deleted")
 	}
 	return nil

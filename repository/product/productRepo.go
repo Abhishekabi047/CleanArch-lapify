@@ -160,6 +160,37 @@ func (cn *ProductRepository) DeleteCategory(Id int) error {
 
 }
 
+func (cn *ProductRepository) PermanentDelete(id int) error {
+	tx := cn.db.Begin()
+
+	defer func() {
+		if r := recover(); r != nil || tx.Error != nil {
+			tx.Rollback()
+		}
+	}()
+	if err:=tx.Exec("DELETE FROM products WHERE id=?",id).Error; err != nil {
+		tx.Rollback()
+		return errors.New("failed to delete from product: " + err.Error())
+	}
+
+	if err := tx.Exec("DELETE FROM product_details WHERE product_id = ?", id).Error; err != nil {
+		tx.Rollback()
+		return errors.New("failed to delete from product_details: " + err.Error())
+	}
+
+	if err := tx.Exec("DELETE FROM inventories WHERE product_id = ?", id).Error; err != nil {
+		tx.Rollback()
+		return errors.New("failed to delete from inventory: " + err.Error())
+	}
+
+	// Commit the transaction if all deletions were successful
+	if err := tx.Commit().Error; err != nil {
+		return errors.New("failed to commit transaction: " + err.Error())
+	}
+
+	return nil
+}
+
 func (cn *ProductRepository) DeleteProductByCategory(Id int) error {
 
 	err := cn.db.Where("category=?", Id).Delete(&entity.Product{}).Error

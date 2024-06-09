@@ -46,4 +46,5 @@ type ProductRepository interface {
 	UpdateProduct( *entity.Product) error
 	UpdateProductdetails( *entity.ProductDetails) error
 	GetProductDescriptionByID( int) (*entity.ProductDetails, error) 
+	PermanentDelete( int) error
 }

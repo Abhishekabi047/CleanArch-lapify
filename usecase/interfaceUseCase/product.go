@@ -37,5 +37,6 @@ type ProductUseCase interface {
 	ExecuteProductFilter(string,  int,  int,  int) ([]entity.Product, error)
 	ExecuteProductList( int,  int) ([]models.ProductWithQuantityResponse, error)
 	ExecuteProductSearch( int, int, string) ([]entity.Product, error)
+	ExecutePermanentDeleteProduct( int) error
 
 }
