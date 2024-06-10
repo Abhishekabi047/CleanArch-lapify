@@ -175,12 +175,12 @@ func (pd *UserHandler) ProductDetails(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
 		return
 	}
-	product, productdetails, err1 := pd.ProductUseCase.ExecuteProductDetails(id)
+	product, productdetails,quantity,err1 := pd.ProductUseCase.ExecuteProductDetails(id)
 	if err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "product not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails})
+	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails,"inventory": quantity})
 }
 
 // AddToCart godoc

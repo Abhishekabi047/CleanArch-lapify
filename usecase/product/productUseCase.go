@@ -34,16 +34,20 @@ func (pu *ProductUseCase) ExecuteProductList(page, limit int) ([]models.ProductW
 	}
 }
 
-func (pu *ProductUseCase) ExecuteProductDetails(id int) (*entity.Product, *entity.ProductDetails, error) {
+func (pu *ProductUseCase) ExecuteProductDetails(id int) (*entity.Product, *entity.ProductDetails, *entity.Inventory, error) {
 	product, err := pu.productRepo.GetProductById(id)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	productdetails, err := pu.productRepo.GetProductDetailsById(id)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	return product, productdetails, nil
+	inventory, err := pu.productRepo.GetInventoryByID(id)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return product, productdetails, inventory, nil
 }
 
 func (pu *ProductUseCase) ExecuteCreateProduct(product entity.Product, image *multipart.FileHeader) (int, error) {
@@ -207,13 +211,13 @@ func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int)
 		return err2
 	}
 
-	inventory,err:=pt.productRepo.GetInventoryByID(id)
-	if err != nil{
+	inventory, err := pt.productRepo.GetInventoryByID(id)
+	if err != nil {
 		return err
 	}
-	inventory.Quantity=product.Quantity
-	err3:=pt.productRepo.UpdateInventory(inventory)
-	if err3 != nil{
+	inventory.Quantity = product.Quantity
+	err3 := pt.productRepo.UpdateInventory(inventory)
+	if err3 != nil {
 		return err3
 	}
 

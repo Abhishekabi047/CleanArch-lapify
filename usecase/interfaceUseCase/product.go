@@ -33,10 +33,10 @@ type ProductUseCase interface {
 	ExecuteGetOffers() (*[]entity.Offer, error)
 	ExecuteGetProductById( int) (*entity.Product, error)
 	ExecuteProductByCategory( int,  int,  int) ([]entity.Product, error)
-	ExecuteProductDetails(int) (*entity.Product, *entity.ProductDetails, error)
 	ExecuteProductFilter(string,  int,  int,  int) ([]entity.Product, error)
 	ExecuteProductList( int,  int) ([]models.ProductWithQuantityResponse, error)
 	ExecuteProductSearch( int, int, string) ([]entity.Product, error)
 	ExecutePermanentDeleteProduct( int) error
+	ExecuteProductDetails( int) (*entity.Product, *entity.ProductDetails,*entity.Inventory,error)
 
 }
