@@ -17,10 +17,11 @@ import (
 type AdminHandler struct {
 	AdminUseCase   interfaceUseCase.AdminUseCase
 	ProductUseCase interfaceUseCase.ProductUseCase
+	UserUseCase interfaceUseCase.UserUseCase
 }
 
-func NewAdminHandler(AdminUsecase interfaceUseCase.AdminUseCase, ProductUsecase interfaceUseCase.ProductUseCase) *AdminHandler {
-	return &AdminHandler{AdminUsecase, ProductUsecase}
+func NewAdminHandler(AdminUsecase interfaceUseCase.AdminUseCase, ProductUsecase interfaceUseCase.ProductUseCase,UserUsecase interfaceUseCase.UserUseCase) *AdminHandler {
+	return &AdminHandler{AdminUsecase, ProductUsecase,UserUsecase}
 }
 
 // @Summary Admin Login with Password
@@ -723,4 +724,19 @@ func (pd *AdminHandler) ProductDetailsAdmin(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails,"inventory": inventory})
+}
+
+func (pd *AdminHandler) UserAddress(c *gin.Context) {
+	ids := c.Param("id")
+	id, err := strconv.Atoi(ids)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
+		return
+	}
+	address,err:=pd.UserUseCase.GetUserAddressByID(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"address":address})
 }

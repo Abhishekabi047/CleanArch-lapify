@@ -40,6 +40,8 @@ func AdminRouter(r *gin.Engine, adminHandler *handlers.AdminHandler) *gin.Engine
 
 	r.GET("/admin/stockless/products", m.AdminRetreiveToken, adminHandler.StocklessProducts)
 
+	r.GET("/admin/user-address/:id", m.AdminRetreiveToken, adminHandler.UserAddress)
+
 	r.POST("/admin/product/offer", m.AdminRetreiveToken, adminHandler.AddProductOffer)
 	r.POST("/admin/category/offer", m.AdminRetreiveToken, adminHandler.AddCategoryOffer)
 	r.POST("/admin/logout", adminHandler.Logout)

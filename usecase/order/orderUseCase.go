@@ -164,15 +164,15 @@ func (co *OrderUseCase) ExecuteOrderUpdate(OrderId int, status string) error {
 		return errors.New("error finding order")
 	}
 	result.Status = status
-	switch status {
-	case "confirmed":
-		break
-	case "cancelled":
-		break
-	default:
-		return errors.New("status should be confirmed or cancelled")
+	// switch status {
+	// case "confirmed":
+	// 	break
+	// case "cancelled":
+	// 	break
+	// default:
+	// 	return errors.New("status should be confirmed or cancelled")
 
-	}
+	// }
 	err1 := co.orderRepo.Update(result)
 	if err1 != nil {
 		return errors.New("error updating  order status")

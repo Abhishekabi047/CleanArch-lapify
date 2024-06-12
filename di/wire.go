@@ -44,7 +44,7 @@ func InitializeAPI(config *config.Config) error {
 	orderrepository:=repositoryd.NewOrderRepository(DB)
 	orderUseCase:=usecased.NewOrder(orderrepository,cartrepository,UserRepository,productRepository,&config.Razopay)
 
-	adminHandler := handlers.NewAdminHandler(adminUseCase,productUseCase)
+	adminHandler := handlers.NewAdminHandler(adminUseCase,productUseCase,userUseCase)
 	userHandler:=handlers.NewUserhandler(userUseCase,productUseCase,cartUseCase)
 	orderHandler:=handlers.NewOrderHandler(orderUseCase,config.Razopay)
 

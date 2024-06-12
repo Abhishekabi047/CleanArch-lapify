@@ -23,4 +23,5 @@ type UserUseCase interface {
 	ExecuteForgetPassword( string) (string, error)
 	ExecuteOtpValidationFPassword(  string,  string) error
 	ForgetPassChange( string,  string) error
+	GetUserAddressByID(int) (entity.UserAddress,error)
 }

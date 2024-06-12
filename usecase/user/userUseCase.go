@@ -422,7 +422,7 @@ func (uu *UserUseCase) ExecuteOtpValidationFPassword(otp string, key string) err
 	if err != nil {
 		return err
 	}
-	fmt.Println("ressss",phone.Validated)
+	fmt.Println("ressss", phone.Validated)
 
 	// hashedpassword, err1 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	// user.Password = string(hashedpassword)
@@ -440,12 +440,12 @@ func (uu *UserUseCase) ForgetPassChange(key string, password string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("res",res)
+	fmt.Println("res", res)
 	phone, err := uu.userRepo.GetByKey(key)
 	if err != nil {
 		return err
 	}
-	fmt.Println("ph",phone.Phone)
+	fmt.Println("ph", phone.Phone)
 	user, err := uu.userRepo.GetByPhone(phone.Phone)
 	if err != nil {
 		return err
@@ -459,7 +459,7 @@ func (uu *UserUseCase) ForgetPassChange(key string, password string) error {
 			return errors.New("password changing failed")
 
 		}
-	}else{
+	} else {
 		return errors.New("Otp Not validated")
 	}
 	return nil
@@ -518,4 +518,12 @@ func (uu *UserUseCase) ExecuteDeleteAddress(id int, addtype string) error {
 		return err1
 	}
 	return nil
+}
+
+func (uu *UserUseCase) GetUserAddressByID(id int) (entity.UserAddress,error) {
+	addres,err:=uu.userRepo.GetAddressById(id)
+	if err != nil{
+		return entity.UserAddress{},err
+	}
+	return *addres,nil
 }

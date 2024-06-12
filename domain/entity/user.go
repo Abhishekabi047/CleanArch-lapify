@@ -3,15 +3,15 @@ package entity
 import "gorm.io/gorm"
 
 type User struct {
-	gorm.Model `json:"-"`
-	Id         int    `gorm:"primarykey"  json:"id"`
-	Name       string `json:"name" validate:"required,alpha" `
-	Email      string `json:"email" validate:"required,email"`
-	Phone      string `json:"phone" validate:"required"`
-	Password   string `json:"password" validate:"required,min=8"`
-	IsBlocked  bool   `gorm:"not null;default:true" json:"-"`
-	Wallet     int    `json:"wallet"`
-	Permission bool   `gorm:"not null;default:true" json:"permission"`
+	gorm.Model  `json:"-"`
+	Id          int    `gorm:"primarykey"  json:"id"`
+	Name        string `json:"name" validate:"required,alpha" `
+	Email       string `json:"email" validate:"required,email"`
+	Phone       string `json:"phone" validate:"required"`
+	Password    string `json:"password" validate:"required,min=8"`
+	IsBlocked   bool   `gorm:"not null;default:true" json:"-"`
+	Wallet      int    `json:"wallet"`
+	Permission  bool   `gorm:"not null;default:true" json:"permission"`
 	ReferalCode string `json:"referalcode"`
 }
 
@@ -19,6 +19,9 @@ type UserAddress struct {
 	gorm.Model `json:"-"`
 	Id         int    `gorm:"primarykey" json:"id"`
 	User_id    int    `json:"-"`
+	FullName   string `json:"full_name"`
+	Phone      int    `json:"phone" validate:"required"`
+	AltPhone   int    `json:"alt_phone" validate:"required"`
 	Address    string `json:"address" validate:"required"`
 	State      string `json:"state" validate:"required,alpha"`
 	Country    string `json:"country" validate:"required,alpha"`
@@ -33,14 +36,14 @@ type Login struct {
 
 type OtpKey struct {
 	gorm.Model
-	Key   string `json:"key"`
-	Phone string `json:"phone"`
-	Validated bool `json:"validated" gorm:"default:false"`
+	Key       string `json:"key"`
+	Phone     string `json:"phone"`
+	Validated bool   `json:"validated" gorm:"default:false"`
 }
 type ListUsersResponse struct {
-    Users []User `json:"users"`
+	Users []User `json:"users"`
 }
 
 type ErrorResponse struct {
-    Error string `json:"error"`
+	Error string `json:"error"`
 }
