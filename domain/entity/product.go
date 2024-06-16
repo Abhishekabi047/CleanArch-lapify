@@ -16,6 +16,7 @@ type Product struct {
 	Removed    bool   `json:"removed"`
 	Category   int    `form:"category" gorm:"foreignKey:ID;references:ID" validate:"required,numeric"`
 	ImageURL   string `json:"imageurl" `
+	WishListed bool   `json:"wishlisted"`
 }
 
 type ProductDetails struct {

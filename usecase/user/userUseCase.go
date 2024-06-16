@@ -366,11 +366,11 @@ func (uu *UserUseCase) ExecuteChangePassword(userid int) (string, error) {
 
 func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
 	var otpkey entity.OtpKey
-	// user, err := uu.userRepo.GetByPhone(phone)
-	// if err != nil {
-	// 	return "", err
-	// }
-	key, err1 := utils.SendOtp(phone, *uu.otp)
+	user, err := uu.userRepo.GetByPhone(phone)
+	if err != nil {
+		return "", err
+	}
+	key, err1 := utils.SendOtp(user.Phone, *uu.otp)
 	if err1 != nil {
 		return "", err1
 	} else {
