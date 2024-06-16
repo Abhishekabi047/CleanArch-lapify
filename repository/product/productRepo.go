@@ -24,12 +24,40 @@ func (pr *ProductRepository) GetAllProducts(offset, limit int) (*[]models.Produc
 
 	rows, err := pr.db.
 		Table("products").
-		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url, inventories.quantity").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wishlisted, inventories.quantity").
 		Joins("JOIN inventories ON products.id = inventories.product_id").
 		Offset(offset).
 		Limit(limit).
 		Where("products.removed = ?", false).
-		Where("inventories.quantity >= ?", 1).
+		Rows()
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var productWithQuantity models.ProductWithQuantityResponse
+		if err := pr.db.ScanRows(rows, &productWithQuantity); err != nil {
+			return nil, err
+		}
+		productsWithQuantity = append(productsWithQuantity, productWithQuantity)
+	}
+
+	return &productsWithQuantity, nil
+}
+
+func (pr *ProductRepository) GetAllProductsSearch(offset, limit int,search string) (*[]models.ProductWithQuantityResponse, error) {
+	var productsWithQuantity []models.ProductWithQuantityResponse
+
+	rows, err := pr.db.
+		Table("products").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wishlisted, inventories.quantity").
+		Joins("JOIN inventories ON products.id = inventories.product_id").
+		Offset(offset).
+		Limit(limit).
+		Where("products.removed = ?", false).
+		Where("name iLIKE ?", "%"+search+"%").
 		Rows()
 
 	if err != nil {

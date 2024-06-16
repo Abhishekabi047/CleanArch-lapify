@@ -683,18 +683,18 @@ func (or *UserHandler) SearchProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	responselist := make([]entity.Product, len(productlist))
-	for i, product := range productlist {
-		responselist[i] = entity.Product{
-			ID:       product.ID,
-			Name:     product.Name,
-			Price:    product.Price,
-			Category: product.Category,
-			ImageURL: product.ImageURL,
-			Size:     product.Size,
-		}
-	}
-	c.JSON(http.StatusOK, gin.H{"products": responselist})
+	// responselist := make([]entity.Product, len(productlist))
+	// for i, product := range productlist {
+	// 	responselist[i] = entity.Product{
+	// 		ID:       product.ID,
+	// 		Name:     product.Name,
+	// 		Price:    product.Price,
+	// 		Category: product.Category,
+	// 		ImageURL: product.ImageURL,
+	// 		Size:     product.Size,
+	// 	}
+	// }
+	c.JSON(http.StatusOK, gin.H{"products": productlist})
 }
 
 // SortByCategory godoc

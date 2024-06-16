@@ -36,24 +36,24 @@ type ProductWithQuantityResponse struct {
 	Category   int    `json:"category"`
 	ImageURL   string `json:"image_url"`
 	Quantity   int    `json:"quantity"`
+	WishListed bool   `json:"wishlisted"`
 }
 
-type EditProduct struct{
-	Name       string `json:"name" validate:"required" form:"name"`
-	Price      int    `json:"price" validate:"required,number" form:"price"`
-	Size       string `json:"size" validate:"required" form:"size"`
-	Category   int    `form:"category" gorm:"foreignKey:ID;references:ID" validate:"required,numeric"`
+type EditProduct struct {
+	Name          string `json:"name" validate:"required" form:"name"`
+	Price         int    `json:"price" validate:"required,number" form:"price"`
+	Size          string `json:"size" validate:"required" form:"size"`
+	Category      int    `form:"category" gorm:"foreignKey:ID;references:ID" validate:"required,numeric"`
 	Description   string `json:"description" validate:"required" form:"description"`
 	Specification string `json:"specification" validate:"required" form:"specification"`
-	Quantity   int `json:"quantity" validate:"required" form:"quantity"`
-
+	Quantity      int    `json:"quantity" validate:"required" form:"quantity"`
 }
 
-type AllUser struct{
-	Id         int    `gorm:"primarykey"  json:"id"`
-	Name       string `json:"name" validate:"required,alpha" `
-	Email      string `json:"email" validate:"required,email"`
-	Phone      string `json:"phone" validate:"required"`
-	Wallet     int    `json:"wallet"`
+type AllUser struct {
+	Id          int    `gorm:"primarykey"  json:"id"`
+	Name        string `json:"name" validate:"required,alpha" `
+	Email       string `json:"email" validate:"required,email"`
+	Phone       string `json:"phone" validate:"required"`
+	Wallet      int    `json:"wallet"`
 	ReferalCode string `json:"referalcode"`
 }

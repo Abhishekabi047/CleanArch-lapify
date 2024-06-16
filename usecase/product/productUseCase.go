@@ -471,25 +471,25 @@ func (pu *ProductUseCase) ExecuteDeleteCoupon(code string) error {
 	return nil
 }
 
-func (pu *ProductUseCase) ExecuteProductSearch(page, limit int, search string) ([]entity.Product, error) {
+func (pu *ProductUseCase) ExecuteProductSearch(page, limit int, search string) ([]models.ProductWithQuantityResponse, error) {
 	offset := (page - 1) * limit
-	products, err := pu.productRepo.GetProductsBySearch(offset, limit, search)
+	products, err := pu.productRepo.GetAllProductsSearch(offset, limit, search)
 	if err != nil {
 		return nil, err
 	}
-	var result []entity.Product
-	for _, product := range products {
-		result = append(result, entity.Product{
-			ID:       product.ID,
-			Name:     product.Name,
-			Price:    product.Price,
-			Category: product.Category,
-			ImageURL: product.ImageURL,
-			Size:     product.Size,
-		})
-	}
+	// var result []entity.Product
+	// for _, product := range products {
+	// 	result = append(result, entity.Product{
+	// 		ID:       product.ID,
+	// 		Name:     product.Name,
+	// 		Price:    product.Price,
+	// 		Category: product.Category,
+	// 		ImageURL: product.ImageURL,
+	// 		Size:     product.Size,
+	// 	})
+	// }
 
-	return result, nil
+	return *products, nil
 }
 func (pu *ProductUseCase) ExecuteProductByCategory(page, limit, id int) ([]entity.Product, error) {
 	offset := (page - 1) * limit

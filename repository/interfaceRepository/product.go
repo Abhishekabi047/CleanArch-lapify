@@ -47,4 +47,5 @@ type ProductRepository interface {
 	UpdateProductdetails( *entity.ProductDetails) error
 	GetProductDescriptionByID( int) (*entity.ProductDetails, error) 
 	PermanentDelete( int) error
+	GetAllProductsSearch(int,  int, string) (*[]models.ProductWithQuantityResponse, error)
 }
