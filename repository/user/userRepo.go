@@ -54,6 +54,18 @@ func (ur *UserRepository) GetByPhone(phone string) (*entity.User, error) {
 	return &user, nil
 }
 
+func (ur *UserRepository) PhoneExists(phone string) (bool, error) {
+	var user entity.User
+	result := ur.db.Select("id").Where("phone = ?", phone).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
+
 func (ur *UserRepository) CheckPermission(user *entity.User) (bool, error) {
 	result := ur.db.Where(&entity.User{Phone: user.Phone}).First(&user)
 	if result.Error != nil {

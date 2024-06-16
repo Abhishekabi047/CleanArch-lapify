@@ -366,22 +366,24 @@ func (uu *UserUseCase) ExecuteChangePassword(userid int) (string, error) {
 
 func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
 	var otpkey entity.OtpKey
-	user, err := uu.userRepo.GetByPhone(phone)
+	user, err := uu.userRepo.PhoneExists(phone)
 	if err != nil {
 		return "", err
 	}
-	key, err1 := utils.SendOtp(user.Phone, *uu.otp)
-	if err1 != nil {
-		return "", err1
-	} else {
+	if user == true {
+		key, err1 := utils.SendOtp(phone, *uu.otp)
+		if err1 != nil {
+			return "", err1
+		}
 		otpkey.Key = key
 		otpkey.Phone = phone
-		err := uu.userRepo.CreateOtpKey(otpkey.Key, otpkey.Phone)
+		err = uu.userRepo.CreateOtpKey(otpkey.Key, otpkey.Phone)
 		if err != nil {
 			return "", nil
 		}
 		return key, nil
 	}
+	return "",errors.New("phone doesnt exists")
 }
 
 func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string, userid int) error {
@@ -520,10 +522,10 @@ func (uu *UserUseCase) ExecuteDeleteAddress(id int, addtype string) error {
 	return nil
 }
 
-func (uu *UserUseCase) GetUserAddressByID(id int) (entity.UserAddress,error) {
-	addres,err:=uu.userRepo.GetAddressById(id)
-	if err != nil{
-		return entity.UserAddress{},err
+func (uu *UserUseCase) GetUserAddressByID(id int) (entity.UserAddress, error) {
+	addres, err := uu.userRepo.GetAddressById(id)
+	if err != nil {
+		return entity.UserAddress{}, err
 	}
-	return *addres,nil
+	return *addres, nil
 }
