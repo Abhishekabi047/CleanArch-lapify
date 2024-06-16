@@ -24,7 +24,7 @@ func (pr *ProductRepository) GetAllProducts(offset, limit int) (*[]models.Produc
 
 	rows, err := pr.db.
 		Table("products").
-		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wishlisted, inventories.quantity").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wish_listed, inventories.quantity").
 		Joins("JOIN inventories ON products.id = inventories.product_id").
 		Offset(offset).
 		Limit(limit).
@@ -52,7 +52,7 @@ func (pr *ProductRepository) GetAllProductsSearch(offset, limit int,search strin
 
 	rows, err := pr.db.
 		Table("products").
-		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wishlisted, inventories.quantity").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wish_listed, inventories.quantity").
 		Joins("JOIN inventories ON products.id = inventories.product_id").
 		Offset(offset).
 		Limit(limit).
