@@ -157,7 +157,7 @@ func (cu *CartUseCase) ExecuteAddWishlist(productid int, userid int) error {
 			return errors.New("error adding to wishlist")
 		}
 		res.WishListed = true
-		if err:=cu.productRepo.UpdateProduct(res).Error();err != ""{
+		if err:=cu.productRepo.UpdateProduct(res);err != nil{
 			return errors.New("error adding to wishlist")
 		}
 	}
@@ -180,12 +180,12 @@ func (cu *CartUseCase) ExecuteRemoveFromWishList(productid, userid int) error {
 			return errors.New("error removing products from wishlist")
 		}
 		res.WishListed = false
-		if err :=cu.productRepo.UpdateProduct(res).Error();err != ""{
+		if err :=cu.productRepo.UpdateProduct(res);err != nil{
 			return errors.New("error removing products from wishlist")
 		}
 
 	} else {
-		return errors.New("product not found")
+		return errors.New("product is not wishlisted")
 	}
 	return nil
 }

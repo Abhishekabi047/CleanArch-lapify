@@ -302,6 +302,7 @@ func (cu *UserHandler) Cart(c *gin.Context) {
 // @Router /user/wishlist [post]
 func (cu *UserHandler) AddToWishList(c *gin.Context) {
 	userID, _ := c.Get("userId")
+	fmt.Println("user",userID)
 	userid := userID.(int)
 	strId := c.PostForm("productid")
 	id, err := strconv.Atoi(strId)

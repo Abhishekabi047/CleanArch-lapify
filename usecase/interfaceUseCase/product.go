@@ -25,7 +25,7 @@ type ProductUseCase interface {
 	ExecuteDeleteProduct( int) error
 	ExecuteDeleteProductAdd( int) error
 	ExecuteEditCategory(entity.Category,  int) error
-	ExecuteEditProduct(models.EditProduct,  int) error
+	ExecuteEditProduct(models.EditProduct,  int,*multipart.FileHeader) error
 	ExecuteGetAllCategory() (*[]entity.Category, error)
 	ExecuteGetCategory( entity.Category) (int, error)
 	ExecuteGetCategoryId( int) (*entity.Category, error)
@@ -39,5 +39,6 @@ type ProductUseCase interface {
 	ExecutePermanentDeleteProduct( int) error
 	ExecuteProductDetails( int) (*entity.Product, *entity.ProductDetails,*entity.Inventory,error)
 	ExecuteProductSearch(int,  int,  string) ([]models.ProductWithQuantityResponse, error)
+	ExecuteEditProduct1( entity.Product,  entity.ProductDetails,  entity.Inventory,  *multipart.FileHeader) error
 
 }

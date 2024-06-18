@@ -116,6 +116,52 @@ func (pu *ProductUseCase) ExecuteCreateProduct(product entity.Product, image *mu
 	}
 }
 
+func (pu *ProductUseCase) ExecuteEditProduct1(product entity.Product, proddet entity.ProductDetails, inventory entity.Inventory, image *multipart.FileHeader) error {
+	err := pu.productRepo.GetProductByName(product.Name)
+	if err == nil {
+		return errors.New("product already exists")
+	}
+	existingProduct, err := pu.productRepo.GetProductById(product.ID)
+	sess := utils.CreateSession(pu.s3)
+	// fmt.Println("sess", sess)
+	if image != nil {
+		ImageURL, err := utils.UploadImageToS3(image, sess)
+		if err != nil {
+			fmt.Println("err:", err)
+			return err
+		}
+
+		existingProduct.Name = product.Name
+		existingProduct.Price = product.Price
+		existingProduct.Category = product.Category
+		existingProduct.Size = product.Size
+		existingProduct.ImageURL = ImageURL
+		err1 := pu.productRepo.UpdateProduct(existingProduct)
+		if err1 != nil {
+			return err1
+		}
+	} else {
+		existingProduct.Name = product.Name
+		existingProduct.Price = product.Price
+		existingProduct.Category = product.Category
+		existingProduct.Size = product.Size
+		err1 := pu.productRepo.UpdateProduct(existingProduct)
+		if err1 != nil {
+			return err1
+		}
+	}
+
+	err2 := pu.productRepo.UpdateProductdetails(&proddet)
+	if err2 != nil {
+		return err2
+	}
+	err3 := pu.productRepo.UpdateInventory(&inventory)
+	if err3 != nil {
+		return err3
+	}
+	return nil
+}
+
 // func PositiveNumeric(fl validator.FieldLevel) bool {
 // 	value, err := strconv.ParseInt(fl.Field().String(),10, 64)
 // 	if err != nil {
@@ -161,7 +207,7 @@ func (pu *ProductUseCase) ExecuteCreateProductDetails(details entity.ProductDeta
 	}
 }
 
-func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int) error {
+func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int, image *multipart.FileHeader) error {
 	validate := validator.New()
 	validate.RegisterValidation("positive", PositiveNumeric)
 	if err := validate.Struct(product); err != nil {
@@ -185,18 +231,33 @@ func (pt *ProductUseCase) ExecuteEditProduct(product models.EditProduct, id int)
 		return fmt.Errorf(errorMsg)
 	}
 	existingProduct, err := pt.productRepo.GetProductById(id)
-	if err != nil {
-		return err
-	}
+	sess := utils.CreateSession(pt.s3)
+	// fmt.Println("sess", sess)
+	if image != nil {
+		ImageURL, err := utils.UploadImageToS3(image, sess)
+		if err != nil {
+			fmt.Println("err:", err)
+			return err
+		}
 
-	existingProduct.Name = product.Name
-	existingProduct.Price = product.Price
-	existingProduct.Category = product.Category
-	existingProduct.Size = product.Size
-
-	err1 := pt.productRepo.UpdateProduct(existingProduct)
-	if err1 != nil {
-		return err1
+		existingProduct.Name = product.Name
+		existingProduct.Price = product.Price
+		existingProduct.Category = product.Category
+		existingProduct.Size = product.Size
+		existingProduct.ImageURL = ImageURL
+		err1 := pt.productRepo.UpdateProduct(existingProduct)
+		if err1 != nil {
+			return err1
+		}
+	} else {
+		existingProduct.Name = product.Name
+		existingProduct.Price = product.Price
+		existingProduct.Category = product.Category
+		existingProduct.Size = product.Size
+		err1 := pt.productRepo.UpdateProduct(existingProduct)
+		if err1 != nil {
+			return err1
+		}
 	}
 
 	des, err := pt.productRepo.GetProductDescriptionByID(id)

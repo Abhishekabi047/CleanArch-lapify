@@ -17,11 +17,11 @@ import (
 type AdminHandler struct {
 	AdminUseCase   interfaceUseCase.AdminUseCase
 	ProductUseCase interfaceUseCase.ProductUseCase
-	UserUseCase interfaceUseCase.UserUseCase
+	UserUseCase    interfaceUseCase.UserUseCase
 }
 
-func NewAdminHandler(AdminUsecase interfaceUseCase.AdminUseCase, ProductUsecase interfaceUseCase.ProductUseCase,UserUsecase interfaceUseCase.UserUseCase) *AdminHandler {
-	return &AdminHandler{AdminUsecase, ProductUsecase,UserUsecase}
+func NewAdminHandler(AdminUsecase interfaceUseCase.AdminUseCase, ProductUsecase interfaceUseCase.ProductUseCase, UserUsecase interfaceUseCase.UserUseCase) *AdminHandler {
+	return &AdminHandler{AdminUsecase, ProductUsecase, UserUsecase}
 }
 
 // @Summary Admin Login with Password
@@ -348,28 +348,68 @@ func (cp *AdminHandler) CreateProduct(c *gin.Context) {
 // @Failure 400 {string} string "Product edit failed"
 // @Router /admin/products/{id} [put]
 func (ep *AdminHandler) EditProduct(c *gin.Context) {
+	fmt.Println("in edit product")
 	var product models.EditProduct
+	fmt.Println("prod",product)
 	ids := c.Param("id")
+	image, _ := c.FormFile("image")
 	id, err := strconv.Atoi(ids)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "string conv err"})
 		return
 	}
-	if err := c.ShouldBindJSON(&product); err != nil {
+	if err := c.ShouldBind(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err1 := ep.ProductUseCase.ExecuteEditProduct(product, id)
+	fmt.Println("not")
+	err1 := ep.ProductUseCase.ExecuteEditProduct(product, id,image)
 	if err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
+	fmt.Println("nooot")
 	prod, err := ep.ProductUseCase.ExecuteGetProductById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"succes": "product edit success", "product": prod})
+}
+
+func (ep *AdminHandler) EditProduct1(c *gin.Context) {
+	var input entity.ProductInput
+	if err := c.ShouldBind(&input); err != nil {
+		fmt.Println("err", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	image, _ := c.FormFile("image")
+	category, err := ep.ProductUseCase.ExecuteGetCategory(entity.Category{ID: input.Category})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	product := entity.Product{
+		Name:     input.Name,
+		Price:    input.Price,
+		Size:     input.Size,
+		Category: category,
+	}
+	ProductDetails := entity.ProductDetails{
+		Description:   input.Description,
+		Specification: input.Specification,
+	}
+	inventory := entity.Inventory{
+		ProductCategory: category,
+		Quantity:        input.Quantity,
+	}
+	err1:=ep.ProductUseCase.ExecuteEditProduct1(product,ProductDetails,inventory,image)
+	if err1 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Edited successfully":"done"})
 }
 
 // DeleteProduct godoc
@@ -718,12 +758,12 @@ func (pd *AdminHandler) ProductDetailsAdmin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
 		return
 	}
-	product, productdetails,inventory,err1 := pd.ProductUseCase.ExecuteProductDetails(id)
+	product, productdetails, inventory, err1 := pd.ProductUseCase.ExecuteProductDetails(id)
 	if err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "product not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails,"inventory": inventory})
+	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails, "inventory": inventory})
 }
 
 func (pd *AdminHandler) UserAddress(c *gin.Context) {
@@ -733,10 +773,10 @@ func (pd *AdminHandler) UserAddress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
 		return
 	}
-	address,err:=pd.UserUseCase.GetUserAddressByID(id)
+	address, err := pd.UserUseCase.GetUserAddressByID(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{"address":address})
+	c.JSON(http.StatusOK, gin.H{"address": address})
 }
