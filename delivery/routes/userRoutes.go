@@ -19,6 +19,7 @@ func UserRouter(r *gin.Engine, userHandler *handlers.UserHandler) *gin.Engine {
 	r.POST("/user/address", m.UserRetreiveCookie, userHandler.AddAddress)
 	r.PATCH("/user/address/:type", m.UserRetreiveCookie, userHandler.EditAddress)
 	r.DELETE("/user/address/:type", m.UserRetreiveCookie, userHandler.DeleteAddress)
+	r.GET("/user/user-address/:id", m.UserRetreiveCookie, userHandler.GetUserAddress)
 	r.GET("/user/details", m.UserRetreiveCookie, userHandler.ShowUserDetails)
 	r.PATCH("/user/profile", m.UserRetreiveCookie, userHandler.EditProfile)
 	r.POST("/user/change-password", m.UserRetreiveCookie, userHandler.ChangePassword)

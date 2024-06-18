@@ -804,3 +804,18 @@ func (sc *UserHandler) AvailableCoupons(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"Available Coupons": couponlist})
 }
+
+func (pd *UserHandler) GetUserAddress(c *gin.Context) {
+	ids := c.Param("id")
+	id, err := strconv.Atoi(ids)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
+		return
+	}
+	address, err := pd.UserUseCase.GetUserAddressByID(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"address": address})
+}
