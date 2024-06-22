@@ -162,13 +162,59 @@ func (pu *ProductUseCase) ExecuteEditProduct1(product entity.Product, proddet en
 	return nil
 }
 
-// func PositiveNumeric(fl validator.FieldLevel) bool {
-// 	value, err := strconv.ParseInt(fl.Field().String(),10, 64)
-// 	if err != nil {
-// 		return false
-// 	}
-// 	return value >= 0
-// }
+//	func PositiveNumeric(fl validator.FieldLevel) bool {
+//		value, err := strconv.ParseInt(fl.Field().String(),10, 64)
+//		if err != nil {
+//			return false
+//		}
+//		return value >= 0
+//	}
+func (pu *ProductUseCase) ExecuteAddBanner(image *multipart.FileHeader, name string) error {
+	sess := utils.CreateSession(pu.s3)
+
+	ImageURL, err := utils.UploadImageToS3(image, sess)
+	if err != nil {
+		fmt.Println("err:", err)
+		return  err
+	}
+	newBanner:=&entity.Banner{
+		Name: name,
+		ImageURL: ImageURL,
+	}
+	err1:=pu.productRepo.CreateBanner(newBanner)
+	if err1 != nil{
+		return err
+	}
+	return nil
+
+}
+
+func (pu *ProductUseCase) ExecuteGetAllBanner() ([]entity.Banner,error){
+	res,err:=pu.productRepo.GetAllBanner()
+	if err != nil{
+		return nil,err
+	}
+	return *res, nil
+
+}
+
+func (pu *ProductUseCase) ExecuteDeleteBanner(id int) error{
+	err:=pu.productRepo.DeleteBanner(id)
+	if err != nil{
+		return err
+	}
+	return nil
+
+}
+
+func (pu *ProductUseCase) ExecuteGetBannerById(id int) (*entity.Banner,error){
+	res,err:=pu.productRepo.GetBannerById(id)
+	if err != nil{
+		return nil,err
+	}
+	return res,nil
+
+}
 
 func PositiveNumeric(fl validator.FieldLevel) bool {
 	value := fl.Field().Int()

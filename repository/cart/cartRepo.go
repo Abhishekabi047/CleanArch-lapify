@@ -2,6 +2,7 @@ package cart
 
 import (
 	"errors"
+	"project/delivery/models"
 	"project/domain/entity"
 	interfaces "project/repository/interfaceRepository"
 
@@ -100,7 +101,7 @@ func (cr *CartRepository) AddProductToWishlist(product *entity.WishList) error {
 	return nil
 }
 
-func (cr *CartRepository) GetProductsFromWishlist( id, userid int) (bool, error) {
+func (cr *CartRepository) GetProductsFromWishlist(id, userid int) (bool, error) {
 	var product entity.WishList
 	result := cr.db.Where(&entity.WishList{UserId: userid, ProductId: id}).First(&product)
 	if result.Error != nil {
@@ -124,7 +125,36 @@ func (cr *CartRepository) GetWishlist(userid int) (*[]entity.WishList, error) {
 	return &WishList, nil
 }
 
-func (cr *CartRepository) RemoveFromWishlist( id, userid int) error {
+func (pr *CartRepository) GetAllWishlist(offset, limit int) (*[]models.ProductWithQuantityResponse, error) {
+	var productsWithQuantity []models.ProductWithQuantityResponse
+
+	rows, err := pr.db.
+		Table("products").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url,products.wish_listed, inventories.quantity").
+		Joins("JOIN inventories ON products.id = inventories.product_id").
+		Offset(offset).
+		Limit(limit).
+		Where("products.removed = ?", false).
+		Where("products.wish_listed ?", true).
+		Rows()
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var productWithQuantity models.ProductWithQuantityResponse
+		if err := pr.db.ScanRows(rows, &productWithQuantity); err != nil {
+			return nil, err
+		}
+		productsWithQuantity = append(productsWithQuantity, productWithQuantity)
+	}
+
+	return &productsWithQuantity, nil
+}
+
+func (cr *CartRepository) RemoveFromWishlist(id, userid int) error {
 	product := &entity.WishList{
 		UserId:    userid,
 		ProductId: id,

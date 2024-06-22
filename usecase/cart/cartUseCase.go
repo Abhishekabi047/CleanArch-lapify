@@ -147,21 +147,14 @@ func (cu *CartUseCase) ExecuteAddWishlist(productid int, userid int) error {
 			ProductId:   product.ID,
 			ProductName: product.Name,
 			Prize:       int(product.Price),
+			ImageURL:    product.ImageURL,
 		}
 		err := cu.cartRepo.AddProductToWishlist(wishprod)
 		if err != nil {
 			return errors.New("error adding to wishlist")
 		}
-		res,err:=cu.productRepo.GetProductById(wishprod.ProductId)
-		if err != nil {
-			return errors.New("error adding to wishlist")
-		}
-		res.WishListed = true
-		if err:=cu.productRepo.UpdateProduct(res);err != nil{
-			return errors.New("error adding to wishlist")
-		}
 	}
-	
+
 	return nil
 }
 
@@ -174,17 +167,7 @@ func (cu *CartUseCase) ExecuteRemoveFromWishList(productid, userid int) error {
 		err := cu.cartRepo.RemoveFromWishlist(productid, userid)
 		if err != nil {
 			return errors.New("error removing products from wishlist")
-		}
-		res,err:=cu.productRepo.GetProductById(productid)
-		if err != nil {
-			return errors.New("error removing products from wishlist")
-		}
-		res.WishListed = false
-		if err :=cu.productRepo.UpdateProduct(res);err != nil{
-			return errors.New("error removing products from wishlist")
-		}
-
-	} else {
+		}} else {
 		return errors.New("product is not wishlisted")
 	}
 	return nil

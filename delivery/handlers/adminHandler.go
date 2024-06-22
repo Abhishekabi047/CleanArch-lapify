@@ -780,3 +780,57 @@ func (pd *AdminHandler) UserAddress(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"address": address})
 }
+
+func (pd *AdminHandler) AddBanner(c *gin.Context) {
+	image, err := c.FormFile("image")
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	name:=c.PostForm("name")
+	err1:=pd.ProductUseCase.ExecuteAddBanner(image,name)
+	if err1 != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"message":"Banner added successfully"})
+}
+
+func (pd *AdminHandler) GetBanner(c *gin.Context) {
+	res,err:=pd.ProductUseCase.ExecuteGetAllBanner()
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Banners":res})
+}
+
+func (pd *AdminHandler) GetBannerById(c *gin.Context) {
+	ids:=c.Param("id")
+	id,err:=strconv.Atoi(ids)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	res,err:=pd.ProductUseCase.ExecuteGetBannerById(id)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Banner":res})
+}
+
+func (pd *AdminHandler) DeleteBanner(c *gin.Context) {
+	ids:=c.Param("id")
+	id,err:=strconv.Atoi(ids)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	err1:=pd.ProductUseCase.ExecuteDeleteBanner(id)
+	if err1 != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"message":"banner succesfully deleted"})
+}

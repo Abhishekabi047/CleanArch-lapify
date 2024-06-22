@@ -35,3 +35,10 @@ type AdminLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type Banner struct {
+	gorm.Model `json:"-"`
+	Id         int    `json:"id"`
+	Name       string `json:"name"`
+	ImageURL   string `json:"imageurl" `
+}

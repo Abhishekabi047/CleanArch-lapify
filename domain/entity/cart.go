@@ -27,4 +27,5 @@ type WishList struct{
 	ProductId int `json:"productid"`
 	ProductName string `json:"productname"`
 	Prize int `json:"prize"`
+	ImageURL   string `json:"imageurl" `
 }

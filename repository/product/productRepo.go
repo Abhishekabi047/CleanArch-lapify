@@ -15,7 +15,7 @@ type ProductRepository struct {
 	db *gorm.DB
 }
 
-func NewProductRepository(db *gorm.DB) interfaces.ProductRepository{
+func NewProductRepository(db *gorm.DB) interfaces.ProductRepository {
 	return &ProductRepository{db}
 }
 
@@ -47,7 +47,7 @@ func (pr *ProductRepository) GetAllProducts(offset, limit int) (*[]models.Produc
 	return &productsWithQuantity, nil
 }
 
-func (pr *ProductRepository) GetAllProductsSearch(offset, limit int,search string) (*[]models.ProductWithQuantityResponse, error) {
+func (pr *ProductRepository) GetAllProductsSearch(offset, limit int, search string) (*[]models.ProductWithQuantityResponse, error) {
 	var productsWithQuantity []models.ProductWithQuantityResponse
 
 	rows, err := pr.db.
@@ -100,6 +100,37 @@ func (pr *ProductRepository) GetProductById(id int) (*entity.Product, error) {
 	return &product, nil
 }
 
+func (pr *ProductRepository) GetBannerById(id int) (*entity.Banner, error) {
+	var banner entity.Banner
+	result := pr.db.First(&banner, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, result.Error
+		}
+		return nil, result.Error
+	}
+	return &banner, nil
+}
+
+func(pr *ProductRepository) GetAllBanner() (*[]entity.Banner,error) {
+	var banner []entity.Banner
+	err := pr.db.Find(&banner).Error
+	if err != nil {
+		return nil, errors.New("record not found")
+	}
+	return &banner, nil
+}
+
+func (cn *ProductRepository) DeleteBanner(Id int) error {
+	err := cn.db.Delete(&entity.Banner{}, Id).Error
+	if err != nil {
+		return errors.New("Coudnt delete")
+	}
+	return nil
+}
+
+
+
 func (pn *ProductRepository) GetProductByName(name string) error {
 	var prodname entity.Product
 	result := pn.db.Where(&entity.Product{Name: name}).First(&prodname)
@@ -131,6 +162,10 @@ func (dp *ProductRepository) DeleteProduct(product *entity.Product) error {
 	return dp.db.Delete(product).Error
 }
 func (up *ProductRepository) CreateProductDetails(details *entity.ProductDetails) error {
+	return up.db.Create(details).Error
+}
+
+func (up *ProductRepository) CreateBanner(details *entity.Banner) error {
 	return up.db.Create(details).Error
 }
 
@@ -196,7 +231,7 @@ func (cn *ProductRepository) PermanentDelete(id int) error {
 			tx.Rollback()
 		}
 	}()
-	if err:=tx.Exec("DELETE FROM products WHERE id=?",id).Error; err != nil {
+	if err := tx.Exec("DELETE FROM products WHERE id=?", id).Error; err != nil {
 		tx.Rollback()
 		return errors.New("failed to delete from product: " + err.Error())
 	}

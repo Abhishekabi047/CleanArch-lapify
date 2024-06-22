@@ -1,8 +1,8 @@
 package models
 
 type EditUser struct {
-	Name  string `json:"name" binding:"required" `
-	Email string `json:"email" binding:"required"`
+	Name  string `json:"name"  `
+	Email string `json:"email" `
 }
 
 type Signup struct {

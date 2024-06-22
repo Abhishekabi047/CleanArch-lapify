@@ -65,13 +65,13 @@ func (uh *UserHandler) SignupWithOtp(c *gin.Context) {
 func (uh *UserHandler) SignupOtpValidation(c *gin.Context) {
 	key := c.PostForm("key")
 	otp := c.PostForm("otp")
-	userId,phone,err := uh.UserUseCase.ExecuteSignupOtpValidation(key, otp)
+	userId, phone, err := uh.UserUseCase.ExecuteSignupOtpValidation(key, otp)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	} else {
-		token:=middleware.CreateToken(userId, phone, "user", c)
-		c.JSON(http.StatusOK, gin.H{"message": "user signup succesfull","token":token})
+		token := middleware.CreateToken(userId, phone, "user", c)
+		c.JSON(http.StatusOK, gin.H{"message": "user signup succesfull", "token": token})
 	}
 }
 
@@ -98,8 +98,8 @@ func (uh *UserHandler) LoginWithPassword(c *gin.Context) {
 		return
 	} else {
 		fmt.Println("userId:", userId)
-		token:=middleware.CreateToken(userId, phone, "user", c)
-		c.JSON(http.StatusOK, gin.H{"message": "user logged in succesfully and cookie stored","token":token})
+		token := middleware.CreateToken(userId, phone, "user", c)
+		c.JSON(http.StatusOK, gin.H{"message": "user logged in succesfully and cookie stored", "token": token})
 	}
 
 }
@@ -175,12 +175,12 @@ func (pd *UserHandler) ProductDetails(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id string conv failed"})
 		return
 	}
-	product, productdetails,quantity,err1 := pd.ProductUseCase.ExecuteProductDetails(id)
+	product, productdetails, quantity, err1 := pd.ProductUseCase.ExecuteProductDetails(id)
 	if err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "product not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails,"inventory": quantity})
+	c.JSON(http.StatusOK, gin.H{"products": product, "product details": productdetails, "inventory": quantity})
 }
 
 // AddToCart godoc
@@ -302,7 +302,7 @@ func (cu *UserHandler) Cart(c *gin.Context) {
 // @Router /user/wishlist [post]
 func (cu *UserHandler) AddToWishList(c *gin.Context) {
 	userID, _ := c.Get("userId")
-	fmt.Println("user",userID)
+	fmt.Println("user", userID)
 	userid := userID.(int)
 	strId := c.PostForm("productid")
 	id, err := strconv.Atoi(strId)
@@ -510,7 +510,7 @@ func (cp *UserHandler) ChangePassword(c *gin.Context) {
 // @Router /user/forget-password [post]
 func (cp *UserHandler) ForgetPassword(c *gin.Context) {
 	phone := c.PostForm("phone")
-	
+
 	key, err := cp.UserUseCase.ExecuteForgetPassword(phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -518,7 +518,6 @@ func (cp *UserHandler) ForgetPassword(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "otp send succesfully", "key": key})
 }
-
 
 // OtpValidationPassword godoc
 // @Summary Validate OTP and change user password
@@ -560,7 +559,7 @@ func (cp *UserHandler) OtpValidationPassword(c *gin.Context) {
 // @Failure 400 {object} gin.H{"error": string} "Bad request: Unable to validate OTP and change password"
 // @Router /user/otp-validation-fpassword [post]
 func (cp *UserHandler) OtpValidationFPassword(c *gin.Context) {
-	key:=c.PostForm("key")
+	key := c.PostForm("key")
 	otp := c.PostForm("otp")
 	err := cp.UserUseCase.ExecuteOtpValidationFPassword(otp, key)
 	if err != nil {
@@ -571,16 +570,15 @@ func (cp *UserHandler) OtpValidationFPassword(c *gin.Context) {
 }
 
 func (cp *UserHandler) ForgetpassChange(c *gin.Context) {
-	key:=c.PostForm("key")
+	key := c.PostForm("key")
 	password := c.PostForm("password")
-	err:=cp.UserUseCase.ForgetPassChange(key,password)
-	if err != nil{
+	err := cp.UserUseCase.ForgetPassChange(key, password)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return 
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "password changed succesfully"})
 }
-
 
 //	 CartItems godoc
 //		@Summary Get the items in the user's cart
@@ -818,4 +816,13 @@ func (pd *UserHandler) GetUserAddress(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"address": address})
+}
+
+func (et *UserHandler) AllCategory(c *gin.Context) {
+	categorylist, err := et.ProductUseCase.ExecuteGetAllCategory()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"Categories": categorylist})
 }

@@ -1,6 +1,9 @@
 package interfaces
 
-import "project/domain/entity"
+import (
+	"project/delivery/models"
+	"project/domain/entity"
+)
 
 type CartRepository interface {
 	AddProductToWishlist(*entity.WishList) error
@@ -17,4 +20,5 @@ type CartRepository interface {
 	RemoveFromWishlist(int, int) error
 	UpdateCart(*entity.Cart) error
 	UpdateCartItem(*entity.CartItem) error
+	GetAllWishlist(offset, limit int) (*[]models.ProductWithQuantityResponse, error)
 }
