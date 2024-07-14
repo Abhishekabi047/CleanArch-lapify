@@ -155,6 +155,16 @@ func (ur *UserRepository) GetAddressByID(addressid int) (*entity.UserAddress, er
 	return &address, nil
 }
 
+func (ur *UserRepository) GetAddressesByUserID(userID int) ([]entity.UserAddress, error) {
+	var addresses []entity.UserAddress
+	result := ur.db.Where("user_id = ?", userID).Find(&addresses)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return addresses, nil
+}
+
+
 func (ur *UserRepository) GetAddressByType(userid int, addresstype string) (*entity.UserAddress, error) {
 	var address entity.UserAddress
 	result := ur.db.Where("user_id=? AND type=?", userid, addresstype).First(&address)

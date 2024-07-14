@@ -32,8 +32,7 @@ type ProductUseCase interface {
 	ExecuteGetCouponByCode(string) (*entity.Coupon, error)
 	ExecuteGetOffers() (*[]entity.Offer, error)
 	ExecuteGetProductById(int) (*entity.Product, error)
-	ExecuteProductByCategory(int, int, int) ([]entity.Product, error)
-	ExecuteProductFilter(string, int, int, int) ([]entity.Product, error)
+	ExecuteProductFilter(string, int, int, int) ([]models.ProductWithQuantityResponse, error)
 	ExecuteProductList(int, int) ([]models.ProductWithQuantityResponse, error)
 	// ExecuteProductSearch( int, int, string) ([]entity.Product, error)
 	ExecutePermanentDeleteProduct(int) error
@@ -44,4 +43,5 @@ type ProductUseCase interface {
 	ExecuteGetAllBanner() ([]entity.Banner,error)
 	ExecuteDeleteBanner( int) error
 	ExecuteGetBannerById( int) (*entity.Banner,error)
+	ExecuteProductByCategory(int, int,  int) (*[]models.ProductWithQuantityResponse, error)
 }

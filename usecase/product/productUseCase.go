@@ -175,44 +175,44 @@ func (pu *ProductUseCase) ExecuteAddBanner(image *multipart.FileHeader, name str
 	ImageURL, err := utils.UploadImageToS3(image, sess)
 	if err != nil {
 		fmt.Println("err:", err)
-		return  err
+		return err
 	}
-	newBanner:=&entity.Banner{
-		Name: name,
+	newBanner := &entity.Banner{
+		Name:     name,
 		ImageURL: ImageURL,
 	}
-	err1:=pu.productRepo.CreateBanner(newBanner)
-	if err1 != nil{
+	err1 := pu.productRepo.CreateBanner(newBanner)
+	if err1 != nil {
 		return err
 	}
 	return nil
 
 }
 
-func (pu *ProductUseCase) ExecuteGetAllBanner() ([]entity.Banner,error){
-	res,err:=pu.productRepo.GetAllBanner()
-	if err != nil{
-		return nil,err
+func (pu *ProductUseCase) ExecuteGetAllBanner() ([]entity.Banner, error) {
+	res, err := pu.productRepo.GetAllBanner()
+	if err != nil {
+		return nil, err
 	}
 	return *res, nil
 
 }
 
-func (pu *ProductUseCase) ExecuteDeleteBanner(id int) error{
-	err:=pu.productRepo.DeleteBanner(id)
-	if err != nil{
+func (pu *ProductUseCase) ExecuteDeleteBanner(id int) error {
+	err := pu.productRepo.DeleteBanner(id)
+	if err != nil {
 		return err
 	}
 	return nil
 
 }
 
-func (pu *ProductUseCase) ExecuteGetBannerById(id int) (*entity.Banner,error){
-	res,err:=pu.productRepo.GetBannerById(id)
-	if err != nil{
-		return nil,err
+func (pu *ProductUseCase) ExecuteGetBannerById(id int) (*entity.Banner, error) {
+	res, err := pu.productRepo.GetBannerById(id)
+	if err != nil {
+		return nil, err
 	}
-	return res,nil
+	return res, nil
 
 }
 
@@ -598,16 +598,16 @@ func (pu *ProductUseCase) ExecuteProductSearch(page, limit int, search string) (
 
 	return *products, nil
 }
-func (pu *ProductUseCase) ExecuteProductByCategory(page, limit, id int) ([]entity.Product, error) {
+func (pu *ProductUseCase) ExecuteProductByCategory(page, limit, id int) (*[]models.ProductWithQuantityResponse, error) {
 	offset := (page - 1) * limit
-	products, err := pu.productRepo.GetProductsByCategory(offset, limit, id)
+	products, err := pu.productRepo.GetAllProductsByCategory(offset, limit, id)
 	if err != nil {
 		return nil, err
 	}
 	return products, nil
 }
 
-func (pu *ProductUseCase) ExecuteProductFilter(size string, minPrize, maxPrize, category int) ([]entity.Product, error) {
+func (pu *ProductUseCase) ExecuteProductFilter(size string, minPrize, maxPrize, category int) ([]models.ProductWithQuantityResponse, error) {
 	products, err := pu.productRepo.GetProductsByFilter(minPrize, maxPrize, category, size)
 	if err != nil {
 		return nil, err

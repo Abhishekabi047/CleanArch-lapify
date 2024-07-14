@@ -47,6 +47,38 @@ func (pr *ProductRepository) GetAllProducts(offset, limit int) (*[]models.Produc
 	return &productsWithQuantity, nil
 }
 
+func (pr *ProductRepository) GetAllProductsByCategory(offset, limit int, category int) (*[]models.ProductWithQuantityResponse, error) {
+	var productsWithQuantity []models.ProductWithQuantityResponse
+
+	query := pr.db.
+		Table("products").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url, products.wish_listed, inventories.quantity").
+		Joins("JOIN inventories ON products.id = inventories.product_id").
+		Offset(offset).
+		Limit(limit).
+		Where("products.removed = ?", false)
+
+	if category != 0 {
+		query = query.Where("products.category = ?", category)
+	}
+
+	rows, err := query.Rows()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var productWithQuantity models.ProductWithQuantityResponse
+		if err := pr.db.ScanRows(rows, &productWithQuantity); err != nil {
+			return nil, err
+		}
+		productsWithQuantity = append(productsWithQuantity, productWithQuantity)
+	}
+
+	return &productsWithQuantity, nil
+}
+
 func (pr *ProductRepository) GetAllProductsSearch(offset, limit int, search string) (*[]models.ProductWithQuantityResponse, error) {
 	var productsWithQuantity []models.ProductWithQuantityResponse
 
@@ -112,7 +144,7 @@ func (pr *ProductRepository) GetBannerById(id int) (*entity.Banner, error) {
 	return &banner, nil
 }
 
-func(pr *ProductRepository) GetAllBanner() (*[]entity.Banner,error) {
+func (pr *ProductRepository) GetAllBanner() (*[]entity.Banner, error) {
 	var banner []entity.Banner
 	err := pr.db.Find(&banner).Error
 	if err != nil {
@@ -128,8 +160,6 @@ func (cn *ProductRepository) DeleteBanner(Id int) error {
 	}
 	return nil
 }
-
-
 
 func (pn *ProductRepository) GetProductByName(name string) error {
 	var prodname entity.Product
@@ -387,30 +417,43 @@ func (ar *ProductRepository) GetProductsByCategory(offset, limit, id int) ([]ent
 	}
 	return product, nil
 }
+func (ar *ProductRepository) GetProductsByFilter(minPrize, maxPrize, category int, size string) ([]models.ProductWithQuantityResponse, error) {
+	var productsWithQuantity []models.ProductWithQuantityResponse
 
-func (ar *ProductRepository) GetProductsByFilter(minPrize, maxPrize, category int, size string) ([]entity.Product, error) {
-	var products []entity.Product
-
-	query := ar.db
+	query := ar.db.
+		Table("products").
+		Select("products.id, products.name, products.price, products.offer_prize, products.size, products.category, products.image_url, products.wish_listed, inventories.quantity").
+		Joins("JOIN inventories ON products.id = inventories.product_id")
 
 	if size != "" {
-		query = query.Where("size=?", size)
+		query = query.Where("products.size = ?", size)
 	}
 	if minPrize > 0 {
-		query = query.Where("price >= ?", minPrize)
+		query = query.Where("products.price >= ?", minPrize)
 	}
 	if maxPrize > 0 {
-		query = query.Where("price <= ?", maxPrize)
+		query = query.Where("products.price <= ?", maxPrize)
 	}
 	if category > 0 {
-		query = query.Where("category = ?", category)
+		query = query.Where("products.category = ?", category)
 	}
-	query = query.Where("removed= ?", false)
-	err := query.Find(&products).Error
+	query = query.Where("products.removed = ?", false)
+
+	rows, err := query.Rows()
 	if err != nil {
 		return nil, err
 	}
-	return products, nil
+	defer rows.Close()
+
+	for rows.Next() {
+		var productWithQuantity models.ProductWithQuantityResponse
+		if err := ar.db.ScanRows(rows, &productWithQuantity); err != nil {
+			return nil, err
+		}
+		productsWithQuantity = append(productsWithQuantity, productWithQuantity)
+	}
+
+	return productsWithQuantity, nil
 }
 
 func (pr *ProductRepository) GetAllOffers() ([]entity.Offer, error) {

@@ -13,4 +13,5 @@ type CartUsecase interface {
 	ExecuteRemoveCartItem(int, int) error
 	ExecuteRemoveFromWishList(int, int) error
 	ExecuteViewWishlist(int) ([]entity.WishList, error)
+	ExecuteDeleteCartItem(int, int) error
 }

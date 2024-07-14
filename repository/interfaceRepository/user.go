@@ -27,4 +27,5 @@ type UserRepository interface {
 	UpdateOtp( *entity.OtpKey) error
 	CheckValidation( string) (bool,error)
 	PhoneExists( string) (bool, error)
+	GetAddressesByUserID( int) ([]entity.UserAddress, error)
 }

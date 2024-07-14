@@ -264,6 +264,26 @@ func (rc *UserHandler) RemoveFromCart(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "product removed from cart"})
 }
 
+
+func (rc *UserHandler) DeleteFromCart(c *gin.Context) {
+	userID, _ := c.Get("userId")
+	userid := userID.(int)
+	id := c.Param("id")
+
+	Id, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "str convertion failed"})
+		return
+	}
+	err1 := rc.CartUSeCase.ExecuteDeleteCartItem(userid, Id)
+	if err1 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "product removed from cart"})
+}
+
+
 // Cart godoc
 // @Summary Get the user's cart
 // @Description Retrieve the user's cart based on the provided user ID
@@ -825,4 +845,24 @@ func (et *UserHandler) AllCategory(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"Categories": categorylist})
+}
+
+func (pd *UserHandler) GetUserBanner(c *gin.Context) {
+	res,err:=pd.ProductUseCase.ExecuteGetAllBanner()
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Banners":res})
+}
+
+func (sc *UserHandler) GetUserAddressByUserID(c *gin.Context) {
+	userID, _ := c.Get("userId")
+	userid := userID.(int)
+	res,err:=sc.UserUseCase.GetUserAddressByID(userid)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"Address":res})
 }

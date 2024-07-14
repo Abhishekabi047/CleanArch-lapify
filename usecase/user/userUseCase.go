@@ -383,7 +383,7 @@ func (uu *UserUseCase) ExecuteForgetPassword(phone string) (string, error) {
 		}
 		return key, nil
 	}
-	return "",errors.New("phone doesnt exists")
+	return "", errors.New("phone doesnt exists")
 }
 
 func (uu *UserUseCase) ExecuteOtpValidationPassword(password string, otp string, userid int) error {
@@ -528,4 +528,12 @@ func (uu *UserUseCase) GetUserAddressByID(id int) (entity.UserAddress, error) {
 		return entity.UserAddress{}, err
 	}
 	return *addres, nil
+}
+
+func (uu *UserUseCase) GetAllUserAddress(id int) ([]entity.UserAddress, error) {
+	add, err := uu.userRepo.GetAddressesByUserID(id)
+	if err != nil {
+		return nil, err
+	}
+	return add, nil
 }

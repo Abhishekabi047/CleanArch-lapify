@@ -129,6 +129,28 @@ func (cu *CartUseCase) ExecuteRemoveCartItem(userid, id int) error {
 	return nil
 }
 
+func (cu *CartUseCase) ExecuteDeleteCartItem(userid, id int) error {
+	usercart, err := cu.cartRepo.GetByUserid(userid)
+	if err != nil {
+		return errors.New("error finding user cart")
+	}
+	prod, err := cu.productRepo.GetProductById(id)
+	if err != nil {
+		return errors.New("product not found")
+	}
+	existingProd, err := cu.cartRepo.GetByName(prod.Name, int(usercart.ID))
+	if err != nil {
+		return errors.New("removing product failed")
+	}
+
+	err1 := cu.cartRepo.RemoveCartItem(existingProd)
+	if err1 != nil {
+		log.Printf("Error removing product from cart: %v", err)
+		return errors.New("reomving products failed")
+	}
+	return nil
+}
+
 func (cu *CartUseCase) ExecuteAddWishlist(productid int, userid int) error {
 	product, err := cu.productRepo.GetProductById(productid)
 	if err != nil {
@@ -167,7 +189,8 @@ func (cu *CartUseCase) ExecuteRemoveFromWishList(productid, userid int) error {
 		err := cu.cartRepo.RemoveFromWishlist(productid, userid)
 		if err != nil {
 			return errors.New("error removing products from wishlist")
-		}} else {
+		}
+	} else {
 		return errors.New("product is not wishlisted")
 	}
 	return nil

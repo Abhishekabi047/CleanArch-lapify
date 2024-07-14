@@ -36,7 +36,7 @@ type ProductRepository interface {
 	GetProductDetailsById(int) (*entity.ProductDetails, error)
 	GetProductsByCategory(int, int, int) ([]entity.Product, error)
 	GetProductsByCategoryoffer(int) ([]entity.Product, error)
-	GetProductsByFilter(int, int, int, string) ([]entity.Product, error)
+	GetProductsByFilter(int, int, int, string) ([]models.ProductWithQuantityResponse, error)
 	GetProductsBySearch(int, int, string) ([]entity.Product, error)
 	UpdateCategory(*entity.Category) error
 	UpdateCouponCount(*entity.Coupon) error
@@ -52,4 +52,5 @@ type ProductRepository interface {
 	DeleteBanner( int) error 
 	GetAllBanner() (*[]entity.Banner,error)
 	GetBannerById( int) (*entity.Banner, error)
+	GetAllProductsByCategory(int,  int,  int) (*[]models.ProductWithQuantityResponse, error)
 }
